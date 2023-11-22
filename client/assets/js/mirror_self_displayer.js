@@ -4,6 +4,10 @@ class MirrorSelfDisplayer {
 
     init() {}
 
-    display() {}
+    display() {
+        let mirrorHTML = "<p>Ok, let's talk!</p>";
+        let container = document.getElementById("question-container");
+        container.innerHTML = mirrorHTML;
+    }
 
 }

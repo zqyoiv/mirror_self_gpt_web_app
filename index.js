@@ -147,32 +147,26 @@ app.post('/get-config-prompt', async (req, res) => {
 /* In mirror-self mode, chat with this preset configuration. */
 app.post('/chat-with-config-prompt', async (req, res) => {
     // Get the prompt from the request body
-    const {prompt, model = 'gpt'} = req.body;
+    const {chat, model = 'gpt'} = req.body;
 
     // Check if prompt is present in the request
-    if (!prompt) {
+    if (!chat) {
         // Send a 400 status code and a message indicating that the prompt is missing
-        return res.status(400).send({error: 'Prompt is missing in the request'});
+        return res.status(400).send({error: 'Prompt is missing in the request' + chat + model});
     }
 
-    let fullConfigPrompt = promptProcessor.fullConfigPrompt() + "\n" + prompt;
+    let fullConfigPrompt = promptProcessor.fullConfigPrompt() + "\n" + chat;
 
     try {
         if (model === 'chatgpt') {
             const result = await openai.createChatCompletion({
                 model:"gpt-4-1106-preview",
                 messages: [
-                    { role: "user", content: prompt }
+                    { role: "user", content: chat }
                 ]
             })
             return res.send(result.data.choices[0]?.message?.content);
         }
-        const completion = await openai.createCompletion({
-            model: 'text-davinci-003', // model name
-            prompt: `Please reply below question in markdown format.\n ${fullConfigPrompt}`, // input prompt
-            max_tokens: 4000
-        });
-        // Send the generated text as the response
         return res.send(completion.data.choices[0].text);
     } catch (error) {
         const errorMsg = error.response ? error.response.data.error : `${error}`;

@@ -6,10 +6,9 @@
 class StoryboardController {
     constructor () {
         // The state of the storyboard.
-        // 0 is instruction state,
-        // 1 is question state, 
-        // 2 is mirror chatting state,
-        // 3 is end.
+        // 0 is question state, 
+        // 1 is mirror chatting state,
+        // 2 is end.
         this.state = 0;
         // The question index of the current round.
         // Range from 0 to 8, total 9 questions.
@@ -35,7 +34,7 @@ class StoryboardController {
     }
 
     nextQuestion() {
-        if (this.questionNumber < this.totalQuestionNumber - 1) {
+        if (this.questionNumber + 1 <= this.totalQuestionNumber - 1) {
             this.questionNumber = (this.questionNumber + 1);
         } else {
             this.nextState();
