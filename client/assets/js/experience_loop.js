@@ -54,20 +54,6 @@ class ExperienceLoop {
             .then((finalResult) => {
                 console.log("ExperienceLoop.run(): promise chain finalResult");
             });
-
-        // questionPromise(0)
-        //     .then((result0) => questionPromise(1))
-            // .then((result1) => questionPromise(2))
-            // .then((result2) => questionPromise(3))
-            // .then((result3) => questionPromise(4))
-            // .then((result4) => questionPromise(5))
-            // .then((result5) => questionPromise(6))
-            // .then((result6) => questionPromise(7))
-            // .then((result7) => questionPromise(8))
-            // .then((result8) => mirrorPromise())
-            // .then((finalResult) => {
-            //     console.log("ExperienceLoop.run(): promise chain finalResult");
-            // });
     }
 }
 
@@ -95,7 +81,6 @@ answerSubmitButton.addEventListener("click", () => {
  * configuration.
  */
 async function sendAnswerToServer(questionNumber) {
-    console.log("sendAnswerToServer(): questionNumber: " + questionNumber);
     // Get the answer input
     const answer = answerInput.textContent;
     addResponse(true, `<div>${answer}</div>`);
