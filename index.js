@@ -155,14 +155,14 @@ app.post('/chat-with-config-prompt', async (req, res) => {
         return res.status(400).send({error: 'Prompt is missing in the request' + chat + model});
     }
 
-    let fullConfigPrompt = promptProcessor.fullConfigPrompt() + "\n" + chat;
+    let fullPrompt = promptProcessor.fullConfigPrompt() + "\n" + chat;
 
     try {
         if (model === 'chatgpt') {
             const result = await openai.createChatCompletion({
                 model:"gpt-4-1106-preview",
                 messages: [
-                    { role: "user", content: chat }
+                    { role: "user", content: fullPrompt }
                 ]
             })
             return res.send(result.data.choices[0]?.message?.content);
