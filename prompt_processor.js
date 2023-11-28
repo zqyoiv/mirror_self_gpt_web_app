@@ -165,12 +165,10 @@ class PromptProcessor {
         try {
             const result = await openai.createChatCompletion({
                 model: "gpt-4-1106-preview",
-                stream: true,
                 messages: [
                     { role: "user", content: configPrompt }
                 ]
-            },
-            { responseType: "stream" }
+            }
             );
             let responseMsg = result.data.choices[0]?.message?.content;
             this.configPromptDict[this.configPromptKeys[configKeyIndex]] = responseMsg;

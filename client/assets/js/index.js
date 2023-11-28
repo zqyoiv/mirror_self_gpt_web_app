@@ -1,3 +1,5 @@
+IS_DEBUG = true;
+
 const API_URL = '/';
 const converter = new showdown.Converter();
 const experienceLoop = new ExperienceLoop();

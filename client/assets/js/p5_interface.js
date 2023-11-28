@@ -36,6 +36,7 @@ let storyboardController = new StoryboardController();
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  background(0);
   textFont("Courier New");
 
   // check to see if serial is available:
@@ -90,29 +91,56 @@ function serialEvent() {
           // console.log("D" + distance);
           // 当没有问题正在显示且是第一个问题时，才由距离传感器触发问题显示
           if (distance < 50 && storyboardController.state == 0) {
+            background(0);
             questionDisplayer.displayInstruction(0);
+            inputBox.hide();
 
             delayStarted = true;
             delayEndTime = millis() + delayTime;
             record();
           }
         }
-        // Button
+        // Button (guide > question > mirror)
       } else if (incomingData.trim() === "B:1") {
-        if (storyboardController.state == 0) {
-            let currentQuestionIndex = storyboardController.questionNumber;
-            inputBox.show();
-            // Send last question's answer to GPT
-            if (currentQuestionIndex > 0) {
-                let answer = inputBox.value();
-                sendAnswerToServer(answer, currentQuestionIndex - 1);
-                inputBox.value("");
-            }  
-            questionDisplayer.displayQuestion(currentQuestionIndex);
-            storyboardController.nextQuestion();            
+        let answer = inputBox.value();
+        let currentQuestionIndex = storyboardController.questionNumber;
+        if (storyboardController.state == QUESTION_STATE) {
+            handleQuestionStateSubmit();
+        }
+        if (storyboardController.state == MIRROR_STATE) {
+            handleMirrorStateSubmit();
         }
       }
     }
+}
+
+function handleQuestionStateSubmit() {
+    mirrorSelfDisplayer.display();
+    if (answer == "") {
+        fill("red");
+        text("Please say something.", 30, 50);
+    }
+
+}
+
+function handleQuestionStateSubmit() {
+    inputBox.show();
+    if (currentQuestionIndex == 0) {
+        questionDisplayer.displayQuestion(currentQuestionIndex);
+        storyboardController.nextQuestion();  
+    }
+    if (currentQuestionIndex > 0) {
+        if (answer == "") {
+            fill("red");
+            text("Please say something.", 30, 50);
+        } else {
+            // Send last question's answer to GPT
+            sendAnswerToServer(answer, currentQuestionIndex - 1);
+            inputBox.value("");
+            questionDisplayer.displayQuestion(currentQuestionIndex);
+            storyboardController.nextQuestion();  
+        }
+    }               
 }
 
 function windowResized() {

@@ -21,7 +21,7 @@ class StoryboardController {
     }
 
     nextState() {
-        if (this.state < 2) {
+        if (this.state < END_STATE) {
             this.state += 1;
         }
     }
@@ -51,14 +51,14 @@ class StoryboardController {
     }
 
     isQuestionMode() {
-        return (this.state == 0);
+        return (this.state == QUESTION_STATE);
     }
 
     isMirrorChatMode() {
-        return (this.state == 1);
+        return (this.state == MIRROR_STATE);
     }
 
     isInGame() {
-        return (this.state < 2);
+        return (this.state < END_STATE);
     }
 }

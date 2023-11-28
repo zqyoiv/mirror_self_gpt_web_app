@@ -19,11 +19,13 @@ class QuestionDisplayer {
 
     displayInstruction(instructionNumber) {
         if (instructionNumber < this.instructionList.length) {
-            // Add a HTML content rendering the string of the qudstionList[questionNumber].
-            let instruction = this.instructionList[instructionNumber];
-            let instructionHTML = "<p>" + instruction + "</p>";
-            let container = document.getElementById("question-container");
-            container.innerHTML = instructionHTML;
+            if (IS_DEBUG) {
+                // Add a HTML content rendering the string of the qudstionList[questionNumber].
+                let instruction = this.instructionList[instructionNumber];
+                let instructionHTML = "<p>" + instruction + "</p>";
+                let container = document.getElementById("question-container");
+                container.innerHTML = instructionHTML;
+            }
 
             // p5 interface version
             redrawBackgroundAndSetTextConfig();
@@ -39,11 +41,13 @@ class QuestionDisplayer {
 
     displayQuestion(questionNumber) {
         if (questionNumber < this.questionList.length) {
-            // Add a HTML content rendering the string of the qudstionList[questionNumber].
-            let question = this.questionList[questionNumber];
-            let questionHTML = "<p>" + question + "</p>";
-            let container = document.getElementById("question-container");
-            container.innerHTML = questionHTML;
+            if (IS_DEBUG) {
+                // Add a HTML content rendering the string of the qudstionList[questionNumber].
+                let question = this.questionList[questionNumber];
+                let questionHTML = "<p>" + question + "</p>";
+                let container = document.getElementById("question-container");
+                container.innerHTML = questionHTML;
+            }
 
             // p5 interface version
             redrawBackgroundAndSetTextConfig();

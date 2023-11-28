@@ -1,13 +1,7 @@
+let IS_DEBUG = false;
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function generateUniqueId() {
-    const timestamp = Date.now();
-    const randomNumber = Math.random();
-    const hexadecimalString = randomNumber.toString(16);
-
-    return `id-${timestamp}-${hexadecimalString}`;
 }
 
 function redrawBackgroundAndSetTextConfig() {
@@ -54,13 +48,6 @@ async function sendAnswerToServer(answer, questionNumber) {
             return;
         }
         const responseText = await response.text();
-        addResponse(false, `<div>GPT prompt config response: \n${responseText}</div>`);
-        // storyboardController.nextQuestion();
-        // if (storyboardController.state == 0) {
-        //     questionDisplayer.displayQuestion(storyboardController.questionNumber);
-        // } else if (storyboardController.state == 1) {
-        //     mirrorSelfDisplayer.display();
-        // }
         return responseText;
     } catch (err) {
         const errorMsg = error.response ? error.response.data.error : `${error}`;
@@ -79,6 +66,7 @@ async function sendAnswerToServerWithQuestionNumber(questionNumber) {
 
     sendAnswerToServer(answer, questionNumber);
 }
+
 
 /* 
  * In Mirror state, talk to gpt with configured prompt.
@@ -105,13 +93,21 @@ async function chatWithMirrorSelf() {
             return;
         }
         const responseText = await response.text();
-        addResponse(false, `<div>GPT prompt config response: \n${responseText}</div>`);
+        // addResponse(false, `<div>GPT prompt config response: \n${responseText}</div>`);
         return responseText;
     } catch (err) {
         const errorMsg = error.response ? error.response.data.error : `${error}`;
         console.error(errorMsg);
         return res.status(500).send(errorMsg);
     } finally {}
+}
+
+function generateUniqueId() {
+    const timestamp = Date.now();
+    const randomNumber = Math.random();
+    const hexadecimalString = randomNumber.toString(16);
+
+    return `id-${timestamp}-${hexadecimalString}`;
 }
 
 // ========================================================
