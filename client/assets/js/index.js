@@ -26,18 +26,6 @@ modelSelect.addEventListener("change", function() {
 let isGeneratingResponse = false;
 
 let loadInterval = null;
-
-// promptInput.addEventListener('keydown', function(event) {
-//     if (event.key === 'Enter') {
-//         event.preventDefault();
-//         if (event.ctrlKey || event.shiftKey) {
-//             document.execCommand('insertHTML', false, '<br/><br/>');
-//         } else {
-//             getGPTResult();
-//         }
-//     }
-// });
-
 function loader(element) {
     element.textContent = ''
 

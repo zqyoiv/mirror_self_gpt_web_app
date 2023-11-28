@@ -1,9 +1,7 @@
 class QuestionDisplayer {
     constructor () {
         this.instructionList = [
-            "Question and initial guide of the project",
-            "Please take a seat.",
-            "In the next few minutes, all you need to do is to talk.",
+            "Please take a seat, push the button in front of you to start.",
         ];
 
         this.questionList = [
@@ -26,6 +24,16 @@ class QuestionDisplayer {
             let instructionHTML = "<p>" + instruction + "</p>";
             let container = document.getElementById("question-container");
             container.innerHTML = instructionHTML;
+
+            // p5 interface version
+            redrawBackgroundAndSetTextConfig();
+            text(
+                this.instructionList[instructionNumber],
+                30,
+                windowHeight / 2 - 50,
+                windowWidth - 40,
+                windowHeight / 2 - 50
+              );
         }
     }
 
@@ -36,6 +44,16 @@ class QuestionDisplayer {
             let questionHTML = "<p>" + question + "</p>";
             let container = document.getElementById("question-container");
             container.innerHTML = questionHTML;
+
+            // p5 interface version
+            redrawBackgroundAndSetTextConfig();
+            text(
+                this.questionList[questionNumber],
+                30,
+                windowHeight / 2 - 50,
+                windowWidth - 40,
+                windowHeight / 2 - 50
+              );
         }
     }
 

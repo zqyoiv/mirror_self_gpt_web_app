@@ -18,6 +18,33 @@
 <div id="face-container"></div>
 <div id="question-container"></div>
 <div id="prompt-config-gpt-reponse-container"></div>
+<div id="response-list">
+</div>
+<div id="bottom-container">
+    <div id="regenerate-button-container">
+        <button id="regenerate-response-button">
+            Regenerate Response
+        </button>
+    </div>
+    <div id="model-select-container">
+        <label for="model-select">Select model:</label>
+        <select id="model-select">
+            <option value="chatgpt" selected>GPT-4 1106 Preview</option>
+            <!-- <option value="gpt">GPT-3 (Understand and generate natural language )</option>
+            <option value="image">Create Image (Create AI image using DALL·E models)</option>
+            <option value="whisper">Whisper(AI speech recognition model)</option> -->
+        </select>
+    </div>
+    <div id="input-container">
+        <div id="answer-input contentEditable></div>
+        <button id="answer-submit-button"></button>
+    </div>
+    <div id="input-container">
+        <input type="file" id="whisper-file" accept=".mp3,.mp4,.mpeg,.mpga,.m4a,.wav,.webm" style="display:none;">
+        <div id="prompt-input" contentEditable></div>
+        <button id="submit-button"></button>
+    </div>
+</div>
 <script src="./assets/js/highlight.min.js"></script>
 <script src="./assets/js/showdown.min.js"></script>
 <script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>
@@ -27,9 +54,8 @@
 <script src="./assets/js/question_displayer.js"></script>
 <script src="./assets/js/mirror_self_displayer.js"></script>
 <script src="./assets/js/user_speak_controller.js"></script>
-<script src="./assets/js/p5_interface.js"></script>
 <!-- TODO: figure out a way to manage file loading/modulization nicer on client side. -->
-<!-- <script src="./assets/js/experience_loop.js"></script> -->
-<!-- <script src="./assets/js/index.js"></script> -->
+<script src="./assets/js/experience_loop.js"></script>
+<script src="./assets/js/index.js"></script>
 </body>
 </html>

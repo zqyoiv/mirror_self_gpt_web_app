@@ -18,13 +18,6 @@ class StoryboardController {
         this.instructionTimer = 1 * 1000;
         this.questionTimer = 1 * 1000; // 5 minutes, 300 seconds
         this.mirrorChatTimer = 1 * 1000; // 5 minutes, 300 seconds
-
-        // Each question has 3 states: 
-        // QUESTION = 0;
-        // USER_ANSWER = 1;
-        // AI_ANSWER = 2;
-        // FINISH = 3;
-        this.questionState = 1;
     }
 
     nextState() {
@@ -39,16 +32,6 @@ class StoryboardController {
         } else {
             this.nextState();
         }
-    }
-
-    nextStateInCurrentQuestion() {
-        if (this.questionState != 3) {
-            this.questionState = this.questionState + 1;
-        }
-    }
-
-    isCurrentQuestionFinished() {
-        return (this.questionState == 3);
     }
 
     getInstructionTimer() {

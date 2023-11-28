@@ -106,8 +106,8 @@ select {
 }
 
 /* Style for the prompt input */
-#answer-input,
-#prompt-input {
+div#answer-input,
+div#prompt-input {
     flex-grow: 1;
     padding: 10px;
     border-radius: 5px;
