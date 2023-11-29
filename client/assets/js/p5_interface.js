@@ -61,6 +61,8 @@ function setup() {
   serial.on("data", serialEvent);
   serial.on("close", makePortButton);
 
+  serial.write("All Set");
+
   //WebCam捕捉视频
   // let cnv = createCanvas(windowWidth, windowHeight); // 设置画布为全屏
   // cnv.style('display', 'block'); // 确保画布没有额外的边距
@@ -141,6 +143,10 @@ function updateLoadingText() {
   textSize(100);
   loadingText = ".".repeat(loadingEllipses);
   if (currentTime - loadingStartTime > loadingDuration) {
+    serial.write("All Set");
+    setTimeout(() => {
+        recorder.stop();
+    }, 2000);
     storyboardController.nextState();
   }
 }
@@ -148,9 +154,6 @@ function updateLoadingText() {
 function handleMirrorStateSubmit() {
     let answer = inputBox.value();
     mirrorSelfDisplayer.display();
-    setTimeout(() => {
-        recorder.stop();
-    }, 2000);
     
     if (answer == "") {
         fill("red");
@@ -200,8 +203,8 @@ function windowResized() {
     let captureWidth = (captureHeight * 1) / 4; // 同上，保持竖屏比例
     video.size(captureWidth, captureHeight);
     video.position(
-      (windowWidth - video.width) / 2,
-      windowHeight - video.height
+      windowWidth / 2,
+      0
     );
   }
 }

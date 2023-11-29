@@ -163,7 +163,7 @@ function makePortButton() {
 //      Video recording related utility functions.
 // ========================================================
 
-  function record() {
+function record() {
     if (video) {
       video.remove();
       video = null;
