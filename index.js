@@ -161,11 +161,10 @@ app.post('/chat-with-config-prompt', async (req, res) => {
         if (model === 'chatgpt') {
             const result = await openai.createChatCompletion({
                 model:"gpt-4-1106-preview",
-                stream: true,
                 messages: [
                     { role: "user", content: fullPrompt }
-                ],
-            })
+                ]
+            });
             return res.send(result.data.choices[0]?.message?.content);
         }
         return res.send(completion.data.choices[0].text);
