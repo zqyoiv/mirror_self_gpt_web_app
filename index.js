@@ -164,10 +164,9 @@ app.post('/chat-with-config-prompt', async (req, res) => {
                 messages: [
                     { role: "user", content: fullPrompt }
                 ]
-            });
+            })
             return res.send(result.data.choices[0]?.message?.content);
         }
-        return res.send(completion.data.choices[0].text);
     } catch (error) {
         const errorMsg = error.response ? error.response.data.error : `${error}`;
         console.error(errorMsg);
