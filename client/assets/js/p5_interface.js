@@ -203,8 +203,8 @@ function windowResized() {
     let captureWidth = (captureHeight * 1) / 4; // 同上，保持竖屏比例
     video.size(captureWidth, captureHeight);
     video.position(
-      windowWidth / 2,
-      0
+      (windowWidth - video.width) / 2,
+      windowHeight - video.height
     );
   }
 }

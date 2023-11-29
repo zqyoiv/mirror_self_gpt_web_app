@@ -204,5 +204,5 @@ function record() {
     //   }, 10000);  // 延迟3000毫秒（3秒）
   
     // 设置视频在画布下方居中播放
-    video.position((windowWidth - video.width) / 2, windowHeight - video.height);
+    video.position(windowWidth/2, 0);
   }
