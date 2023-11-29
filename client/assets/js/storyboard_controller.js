@@ -7,9 +7,10 @@ class StoryboardController {
     constructor () {
         // The state of the storyboard.
         // 0 is question state, 
-        // 1 is mirror chatting state,
-        // 2 is end.
-        this.state = 0;
+        // 1 is loading state,
+        // 2 is mirror chatting state,
+        // 3 is end.
+        this.state = -1;
         // The question index of the current round.
         // Range from 0 to 8, total 9 questions.
         this.questionNumber = 0;
@@ -48,17 +49,5 @@ class StoryboardController {
 
     getTotalQuestionNumber () {
         return this.totalQuestionNumber;
-    }
-
-    isQuestionMode() {
-        return (this.state == QUESTION_STATE);
-    }
-
-    isMirrorChatMode() {
-        return (this.state == MIRROR_STATE);
-    }
-
-    isInGame() {
-        return (this.state < END_STATE);
     }
 }

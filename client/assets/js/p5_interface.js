@@ -24,6 +24,10 @@ let video;
 let isVideoPlaying = false;
 const fr = 30;
 
+let loadingDuration = 5000;
+let loadingText = "";
+let loadingStartTime = 0;
+
 // 在全局范围内声明输入框和按钮
 let inputBox;
 // let sendButton;
@@ -78,6 +82,24 @@ function setup() {
   inputBox.hide();
 }
 
+function draw() {
+    if (storyboardController.state == LOADING_STATE) {
+        background(0);
+        fill(255);
+        textSize(24);
+        text(
+            loadingText,
+            30,
+            windowHeight / 2 - 50,
+            windowWidth - 40,
+            windowHeight / 2 - 50
+        );
+        updateLoadingText();
+    } else if (storyboardController.state == MIRROR_STATE) {
+        mirrorSelfDisplayer.display();
+        inputBox.show();
+    }
+}
 function serialEvent() {
     let incomingData = serial.readStringUntil("\n");
     if (incomingData !== null && incomingData.length > 0) {
@@ -89,7 +111,9 @@ function serialEvent() {
           distance = parsedDistance;
           // console.log("D" + distance);
           // 当没有问题正在显示且是第一个问题时，才由距离传感器触发问题显示
-          if (distance < 50 && storyboardController.state == 0) {
+          if (distance < 50 
+            && storyboardController.state == -1) {
+            storyboardController.state = QUESTION_STATE;
             background(0);
             questionDisplayer.displayInstruction(0);
             inputBox.hide();
@@ -111,9 +135,22 @@ function serialEvent() {
     }
 }
 
-function handleQuestionStateSubmit() {
+function updateLoadingText() {
+  let currentTime = millis();
+  let loadingEllipses = Math.floor((currentTime - loadingStartTime) / 500) % 7;
+  textSize(100);
+  loadingText = ".".repeat(loadingEllipses);
+  if (currentTime - loadingStartTime > loadingDuration) {
+    storyboardController.nextState();
+  }
+}
+
+function handleMirrorStateSubmit() {
     let answer = inputBox.value();
     mirrorSelfDisplayer.display();
+    setTimeout(() => {
+        recorder.stop();
+    }, 2000);
     
     if (answer == "") {
         fill("red");
@@ -149,7 +186,8 @@ function handleQuestionStateSubmit() {
             sendAnswerToServer(answer, currentQuestionIndex - 1);
             inputBox.value("");
             questionDisplayer.displayQuestion(currentQuestionIndex);
-            storyboardController.nextQuestion();  
+            storyboardController.nextQuestion(); 
+            loadingStartTime = millis();
         }
     }               
 }

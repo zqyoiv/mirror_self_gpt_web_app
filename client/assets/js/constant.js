@@ -1,3 +1,4 @@
 const QUESTION_STATE = 0;
-const MIRROR_STATE = 1;
-const END_STATE = 2;
+const LOADING_STATE = 1;
+const MIRROR_STATE = 2;
+const END_STATE = 3;
