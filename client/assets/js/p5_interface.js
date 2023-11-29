@@ -1,9 +1,8 @@
-// variable to hold an instance of the p5.webserial library:
+// original version: https://editor.p5js.org/qh2207/sketches/5SfuOIngg
+
 const serial = new p5.WebSerial();
 
-// 全局变量来存储距离传感器的读数
 let distance = 0;
-//跟踪是否已经由距离传感器触发过一次
 let triggeredByDistanceSensor = false;
 
 // HTML button object:
@@ -100,10 +99,8 @@ function serialEvent() {
             record();
           }
         }
-        // Button (guide > question > mirror)
+        // Button (guide --> question --> mirror)
       } else if (incomingData.trim() === "B:1") {
-        let answer = inputBox.value();
-        let currentQuestionIndex = storyboardController.questionNumber;
         if (storyboardController.state == QUESTION_STATE) {
             handleQuestionStateSubmit();
         }
@@ -115,16 +112,30 @@ function serialEvent() {
 }
 
 function handleQuestionStateSubmit() {
+    let answer = inputBox.value();
     mirrorSelfDisplayer.display();
+    
     if (answer == "") {
         fill("red");
         text("Please say something.", 30, 50);
+    } else {
+        chatWithMirrorSelf(answer, (response) => {
+            redrawBackgroundAndSetTextConfig();
+            text(responseText,
+            30,
+            windowHeight / 2 - 50,
+            windowWidth - 40,
+            windowHeight / 2 - 50);
+        });
+        inputBox.value("");
     }
-
 }
 
 function handleQuestionStateSubmit() {
+    let answer = inputBox.value();
+    let currentQuestionIndex = storyboardController.questionNumber;
     inputBox.show();
+
     if (currentQuestionIndex == 0) {
         questionDisplayer.displayQuestion(currentQuestionIndex);
         storyboardController.nextQuestion();  

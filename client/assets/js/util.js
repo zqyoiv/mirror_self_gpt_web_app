@@ -71,16 +71,7 @@ async function sendAnswerToServerWithQuestionNumber(questionNumber) {
 /* 
  * In Mirror state, talk to gpt with configured prompt.
  */
-async function chatWithMirrorSelf() {
-    // Get the answer input
-    const chat = answerInput.textContent;
-    console.log("chatWithMirrorSelf(): chat: " + chat);
-    const model = document.getElementById('model-select').value;
-    addResponse(true, `<div>${chat}</div>`);
-
-    // Clear the prompt input
-    answerInput.textContent = '';
-
+async function chatWithMirrorSelf(chat, callback) {
     try {
         // Send a POST request to the API with the prompt in the request body
         const response = await fetch('/chat-with-config-prompt', {
@@ -93,7 +84,9 @@ async function chatWithMirrorSelf() {
             return;
         }
         const responseText = await response.text();
-        // addResponse(false, `<div>GPT prompt config response: \n${responseText}</div>`);
+        
+        callback(responseText);
+
         return responseText;
     } catch (err) {
         const errorMsg = error.response ? error.response.data.error : `${error}`;
