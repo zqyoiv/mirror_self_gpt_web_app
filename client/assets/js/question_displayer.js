@@ -27,15 +27,17 @@ class QuestionDisplayer {
                 container.innerHTML = instructionHTML;
             }
 
-            // p5 interface version
-            redrawBackgroundAndSetTextConfig();
-            text(
-                this.instructionList[instructionNumber],
-                30,
-                windowHeight / 2 - 50,
-                windowWidth - 40,
-                windowHeight / 2 - 50
-              );
+            if (!IS_DEBUG) {
+                // p5 interface version
+                redrawBackgroundAndSetTextConfig();
+                text(
+                    this.instructionList[instructionNumber],
+                    30,
+                    windowHeight / 2 - 50,
+                    windowWidth - 40,
+                    windowHeight / 2 - 50
+                );
+            }
         }
     }
 
@@ -49,15 +51,17 @@ class QuestionDisplayer {
                 container.innerHTML = questionHTML;
             }
 
-            // p5 interface version
-            redrawBackgroundAndSetTextConfig();
-            text(
-                this.questionList[questionNumber],
-                30,
-                windowHeight / 2 - 50,
-                windowWidth - 40,
-                windowHeight / 2 - 50
-              );
+            if (!IS_DEBUG) {
+                // p5 interface version
+                redrawBackgroundAndSetTextConfig();
+                text(
+                    this.questionList[questionNumber],
+                    30,
+                    windowHeight / 2 - 50,
+                    windowWidth - 40,
+                    windowHeight / 2 - 50
+                );
+            }
         }
     }
 

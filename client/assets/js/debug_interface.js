@@ -1,5 +1,6 @@
+IS_DEBUG = true;
+
 const answerSubmitButton = document.getElementById('answer-submit-button');
-const answerInput = document.getElementById('answer-input');
 const configGPTResponseDiv = document.getElementById('prompt-config-gpt-reponse-container');
 
 let mirrorSelfDisplayer = new MirrorSelfDisplayer();
@@ -26,9 +27,9 @@ class ExperienceLoop {
         }
 
         function start(i) {
-            if (storyboardController.state == 0) {
+            if (storyboardController.state == QUESTION_STATE) {
                 questionDisplayer.displayQuestion(i);
-            } else if (storyboardController.state == 1) {
+            } else if (storyboardController.state == MIRROR_STATE) {
                 mirrorSelfDisplayer.display();
             }                
         }
@@ -50,7 +51,10 @@ class ExperienceLoop {
         instructionPromise(0)
             .then((r0 => instructionPromise(1)))
             .then((r1 => instructionPromise(2)))
-            .then((r2 => start(0)))
+            .then((r2 => {
+                storyboardController.state = QUESTION_STATE;
+                start(0);
+            }))
             .then((finalResult) => {
                 console.log("ExperienceLoop.run(): promise chain finalResult");
             });
@@ -69,9 +73,17 @@ answerInput.addEventListener('keydown', function(event) {
 });
 
 answerSubmitButton.addEventListener("click", () => {
-    if (storyboardController.state == 0) {
-        sendAnswerToServer(storyboardController.questionNumber);
-    } else if (storyboardController.state == 1) {
-        chatWithMirrorSelf();
+    if (storyboardController.state == QUESTION_STATE) {
+        sendAnswerToServer_debug(storyboardController.questionNumber);
+        storyboardController.nextQuestion();
+        // If changed to mirror stage at this point, display "let's talk".
+        if (storyboardController.state == MIRROR_STATE) {
+            mirrorSelfDisplayer.display();
+        } else {
+            questionDisplayer.displayQuestion(storyboardController.questionNumber);
+        }
+    } 
+    if (storyboardController.state == MIRROR_STATE) {
+        chatWithMirrorSelf_debug();
     }
 });

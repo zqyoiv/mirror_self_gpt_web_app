@@ -4,11 +4,6 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function redrawBackgroundAndSetTextConfig() {
-    background(0);
-    fill(255);
-    textSize(42);
-}
 // ========================================================
 //     ChatGPT call utilities.
 // ========================================================
@@ -56,22 +51,11 @@ async function sendAnswerToServer(answer, questionNumber) {
     } finally {}
 }
 
-async function sendAnswerToServerWithQuestionNumber(questionNumber) {
-    // Get the answer input
-    const answer = answerInput.textContent;
-    addResponse(true, `<div>${answer}</div>`);
-
-    // Clear the prompt input
-    answerInput.textContent = '';
-
-    sendAnswerToServer(answer, questionNumber);
-}
-
 
 /* 
  * In Mirror state, talk to gpt with configured prompt.
  */
-async function chatWithMirrorSelf(chat, callback) {
+async function chatWithMirrorSelf(chat) {
     try {
         // Send a POST request to the API with the prompt in the request body
         const response = await fetch('/chat-with-config-prompt', {
@@ -84,9 +68,6 @@ async function chatWithMirrorSelf(chat, callback) {
             return;
         }
         const responseText = await response.text();
-        
-        callback(responseText);
-
         return responseText;
     } catch (err) {
         const errorMsg = error.response ? error.response.data.error : `${error}`;

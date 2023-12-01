@@ -82,6 +82,14 @@ function setup() {
   inputBox.style("height", "40px"); // 增加输入框的高度
   inputBox.style("font-size", "24px"); // 可选：增加字体大小以改善可读性
   inputBox.hide();
+
+  // for debug
+  storyboardController.state = MIRROR_STATE;
+}
+
+// for debug
+function mousePressed() {
+    handleMirrorStateSubmit();
 }
 
 function draw() {
@@ -207,4 +215,10 @@ function windowResized() {
       windowHeight - video.height
     );
   }
+}
+
+function redrawBackgroundAndSetTextConfig() {
+  background(0);
+  fill(255);
+  textSize(42);
 }

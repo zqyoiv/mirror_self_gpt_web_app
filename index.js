@@ -89,7 +89,7 @@ app.post('/get-prompt-result', async (req, res) => {
                 messages: [
                     { role: "user", content: prompt }
                 ]
-            })
+            });
             return res.send(result.data.choices[0]?.message?.content);
         }
         const completion = await openai.createCompletion({
@@ -162,9 +162,10 @@ app.post('/chat-with-config-prompt', async (req, res) => {
             const result = await openai.createChatCompletion({
                 model:"gpt-4-1106-preview",
                 messages: [
-                    { role: "user", content: fullPrompt }
+                    { role: "user", content: chat }
                 ]
-            })
+            });
+            console.log(result.data.choices[0]?.message?.content);
             return res.send(result.data.choices[0]?.message?.content);
         }
     } catch (error) {

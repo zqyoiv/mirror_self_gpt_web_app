@@ -12,14 +12,16 @@ class MirrorSelfDisplayer {
             container.innerHTML = mirrorHTML;
         }
 
-        redrawBackgroundAndSetTextConfig();
-        text(
-            this.mirrorStart,
-            30,
-            windowHeight / 2 - 50,
-            windowWidth - 40,
-            windowHeight / 2 - 50
-            );
+        if (!IS_DEBUG) {
+            redrawBackgroundAndSetTextConfig();
+            text(
+                this.mirrorStart,
+                30,
+                windowHeight / 2 - 50,
+                windowWidth - 40,
+                windowHeight / 2 - 50
+                );
+        }
     }
 
 }

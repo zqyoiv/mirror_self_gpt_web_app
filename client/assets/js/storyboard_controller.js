@@ -23,7 +23,18 @@ class StoryboardController {
 
     nextState() {
         if (this.state < END_STATE) {
-            this.state += 1;
+            if (!IS_DEBUG) {
+                this.state += 1;
+            }
+            
+            if (IS_DEBUG) {
+                // debug mode don't have loading.
+                if (this.state == QUESTION_STATE) {
+                    this.state = MIRROR_STATE;
+                } else if (this.state == MIRROR_STATE) {
+                    this.state = END_STATE;
+                }
+            }
         }
     }
 
