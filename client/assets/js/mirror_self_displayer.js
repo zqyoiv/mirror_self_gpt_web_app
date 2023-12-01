@@ -20,8 +20,7 @@ class MirrorSelfDisplayer {
                 windowHeight / 2 - 50,
                 windowWidth - 40,
                 windowHeight / 2 - 50
-                );
+            );
         }
     }
-
 }

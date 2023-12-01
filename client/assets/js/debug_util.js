@@ -37,7 +37,7 @@ async function chatWithMirrorSelf_debug() {
     // Get the answer input
     const chat = answerInput.textContent;
     if (chat == "") { return;}
-    
+
     console.log("chatWithMirrorSelf(): chat: " + chat);
     const model = document.getElementById('model-select').value;
     addResponse(true, `<div>${chat}</div>`);
@@ -56,12 +56,22 @@ async function chatWithMirrorSelf_debug() {
             setErrorForResponse(responseElement, `HTTP Error: ${await response.text()}`);
             return;
         }
-        const responseText = await response.text();
-        addResponse(false, `<div>GPT prompt config response: \n${responseText}</div>`);
+        const responseObject = await response.json();
+        let mirrorText = responseObject["mirrorText"];
+        if (responseObject["path"]) {
+            let audio = new Audio(responseObject["path"]);
+            audio.play();
+        }
+        addResponse(false, `<div>Mirror response: \n${mirrorText}</div>`);
         return responseText;
     } catch (err) {
-        const errorMsg = error.response ? error.response.data.error : `${error}`;
+        const errorMsg = error.response ? error.response.error : `${error}`;
         console.error(errorMsg);
         return res.status(500).send(errorMsg);
     } finally {}
+}
+
+function findMirrorSelfText(responseText) {
+    let mirrorSelfText = responseText.split("Mirror-self: ")[1];
+    return mirrorSelfText;
 }

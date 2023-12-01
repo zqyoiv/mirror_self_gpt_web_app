@@ -26,7 +26,7 @@ class ExperienceLoop {
                 });
         }
 
-        function start(i) {
+        function startQuestion(i) {
             if (storyboardController.state == QUESTION_STATE) {
                 questionDisplayer.displayQuestion(i);
             } else if (storyboardController.state == MIRROR_STATE) {
@@ -34,26 +34,12 @@ class ExperienceLoop {
             }                
         }
 
-        function mirrorPromise() {
-            return new Promise((resolve2, reject2) => {
-                mirrorSelfDisplayer.display();
-                userSpeechProcessor.startRecording();
-                sleep(storyboardController.getMirrorChatTimer())
-                    .then(() => {
-                        userSpeechProcessor.endRecording();
-                        // TODO: send userAnswer to GPT.
-                        let userAnswer = userSpeechProcessor.voiceToText();
-                        resolve2();
-                    });
-            });
-        }
-
         instructionPromise(0)
             .then((r0 => instructionPromise(1)))
             .then((r1 => instructionPromise(2)))
             .then((r2 => {
                 storyboardController.state = QUESTION_STATE;
-                start(0);
+                startQuestion(0);
             }))
             .then((finalResult) => {
                 console.log("ExperienceLoop.run(): promise chain finalResult");

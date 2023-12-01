@@ -140,18 +140,10 @@ async function getGPTResult(_promptToRetry, _uniqueIdToRetry) {
         // Set isGeneratingResponse to false
         isGeneratingResponse = false;
 
-        // Remove the loading class from the submit button
-        // submitButton.classList.remove("loading");
-
         // Clear the loader interval
         clearInterval(loadInterval);
     }
 }
-
-
-// submitButton.addEventListener("click", () => {
-//     getGPTResult();
-// });
 
 regenerateResponseButton.addEventListener("click", () => {
     regenerateGPTResult();

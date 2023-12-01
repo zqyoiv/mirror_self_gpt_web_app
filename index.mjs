@@ -1,23 +1,30 @@
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url);
 const express = require('express');
-const {Configuration, OpenAIApi} = require("openai");
 const app = express();
 const cors = require('cors');
 const fs = require('fs');
-const path = require('path');
 const multer  = require('multer');
 const { v4: uuidv4 } = require('uuid');
 require("dotenv").config();
-const configuration = new Configuration({
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
-const PromptProcessor = require('./prompt_processor.js').PromptProcessor;
+import { PromptProcessor} from './prompt_processor.mjs';
+import { get } from 'http';
 
 let promptProcessor = new PromptProcessor();
 
 app.use(cors());
 app.use(express.json());
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.use('/', express.static(__dirname + '/client')); // Serves resources from client folder
 
 // Set up Multer to handle file uploads
@@ -46,14 +53,14 @@ const upload = multer({
 
 app.post('/transcribe', upload.single('audio'), async (req, res) => {
     try {
-        const resp = await openai.createTranscription(
+        const resp = await openai.audio.transcriptions.create(
             fs.createReadStream(req.file.path),
             "whisper-1",
             'text'
         );
-        return res.send(resp.data.text);
+        return res.send(resp.text);
     } catch (error) {
-        const errorMsg = error.response ? error.response.data.error : `${error}`;
+        const errorMsg = error.response ? error.response.error : `${error}`;
         console.log(errorMsg)
         return res.status(500).send(errorMsg);
     } finally {
@@ -76,31 +83,31 @@ app.post('/get-prompt-result', async (req, res) => {
         // Use the OpenAI SDK to create a completion
         // with the given prompt, model and maximum tokens
         if (model === 'image') {
-            const result = await openai.createImage({
+            const result = await openai.images.generate({
                 prompt,
                 response_format: 'url',
                 size: '512x512'
             });
-            return res.send(result.data.data[0].url);
+            return res.send(result.data[0].url);
         }
         if (model === 'chatgpt') {
-            const result = await openai.createChatCompletion({
+            const result = await openai.chat.completions.create({
                 model:"gpt-4-1106-preview",
                 messages: [
-                    { role: "user", content: prompt }
+                    { "role": "user", "content": prompt }
                 ]
             });
-            return res.send(result.data.choices[0]?.message?.content);
+            return res.send(result.choices[0]?.message?.content);
         }
-        const completion = await openai.createCompletion({
+        const completion = await openai.chat.completions.create({
             model: 'text-davinci-003', // model name
             prompt: `Please reply below question in markdown format.\n ${prompt}`, // input prompt
             max_tokens: 4000
         });
         // Send the generated text as the response
-        return res.send(completion.data.choices[0].text);
+        return res.send(completion.choices[0].text);
     } catch (error) {
-        const errorMsg = error.response ? error.response.data.error : `${error}`;
+        const errorMsg = error.response ? error.response.error : `${error}`;
         console.error(errorMsg);
         // Send a 500 status code and the error message as the response
         return res.status(500).send(errorMsg);
@@ -122,7 +129,7 @@ app.post('/question-answer', async (req, res) => {
         let updateResult = await promptProcessor.updatePromptWithAnswer(questionNumber, answer);
         return res.send(updateResult);
     } catch (error) {
-        const errorMsg = error.response ? error.response.data.error : `${error}`;
+        const errorMsg = error.response ? error.response.error : `${error}`;
         console.error(errorMsg);
         // Send a 500 status code and the error message as the response
         return res.status(500).send(errorMsg);
@@ -137,7 +144,7 @@ app.post('/get-config-prompt', async (req, res) => {
         let fullConfigPrompt = await promptProcessor.fullConfigPrompt();
         return res.send(fullConfigPrompt);
     } catch (error) {
-        const errorMsg = error.response ? error.response.data.error : `${error}`;
+        const errorMsg = error.response ? error.response.error : `${error}`;
         console.error(errorMsg);
         // Send a 500 status code and the error message as the response
         return res.status(500).send(errorMsg);
@@ -155,26 +162,80 @@ app.post('/chat-with-config-prompt', async (req, res) => {
         return res.status(400).send({error: 'Prompt is missing in the request' + chat + model});
     }
 
-    let fullPrompt = promptProcessor.fullConfigPrompt() + "\n" + chat;
+    let promptConfiguration = promptProcessor.fullConfigPrompt();
+    console.log("promptConfiguration: " + promptConfiguration.length);
 
-    try {
-        if (model === 'chatgpt') {
-            const result = await openai.createChatCompletion({
-                model:"gpt-4-1106-preview",
-                messages: [
-                    { role: "user", content: chat }
-                ]
-            });
-            console.log(result.data.choices[0]?.message?.content);
-            return res.send(result.data.choices[0]?.message?.content);
+    async function getChatResult(chat) {
+        const result = await openai.chat.completions.create({
+            model:"gpt-4-1106-preview",
+            messages: [
+                { "role": "user", "content": chat },
+                { "role": "system", "content": promptConfiguration }
+            ]
+        });
+        console.log("mirror: " + result.choices[0]?.message?.content);
+        return result.choices[0]?.message?.content;
+    
+    }
+
+    async function getSpeechResult(result) {
+        if (result) {
+            let mirrorText = "";
+            let path = "";
+            if (result.split("Mirror-self: ").length > 1) {
+                mirrorText = result.split("Mirror-self: ")[1];
+                path = await sendTextToSpeech(mirrorText);
+            } else {
+                mirrorText = result;
+                path = await sendTextToSpeech(result);
+            }
+            return {"mirrorText": mirrorText, "path": path};
         }
+    }
+
+    getChatResult(chat)
+    .then(getSpeechResult)
+    .then((obj) => {
+        return res.send(obj);
+    })
+    .catch((error) => {
+        const errorMsg = error.response ? error.response.error : `${error}`;
+        console.error(errorMsg);
+        // Send a 500 status code and the error message as the response
+        return res.status(500).send(errorMsg);
+    });
+});
+
+/* Text to speech call. */
+app.post('/text-to-speech', async (req, res) => {
+    const {text} = req.body;
+    if (!text) {
+        // Send a 400 status code and a message indicating that the prompt is missing.
+        return res.status(400).send({error: 'Prompt is missing in the request'});
+    }
+    try {
+        let speechFilePath = await sendTextToSpeech(text);
+        return res.send(speechFilePath);
     } catch (error) {
-        const errorMsg = error.response ? error.response.data.error : `${error}`;
+        const errorMsg = error.response ? error.response.error : `${error}`;
         console.error(errorMsg);
         // Send a 500 status code and the error message as the response
         return res.status(500).send(errorMsg);
     }
 });
+
+async function sendTextToSpeech(text) {
+    const speechFilePath = "./client/speech.mp3";
+    const speechFile = path.resolve(speechFilePath);
+    const mp3 = await openai.audio.speech.create({
+        model: "tts-1",
+        voice: "alloy",
+        input: text,
+    });
+    const buffer = Buffer.from(await mp3.arrayBuffer());
+    await fs.promises.writeFile(speechFile, buffer);
+    return "./speech.mp3";
+}
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => console.log(`Listening on port ${port}`));

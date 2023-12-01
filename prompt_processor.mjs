@@ -1,14 +1,13 @@
-const { Configuration, OpenAIApi } = require("openai");
-const configuration = new Configuration({
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
-const util = require('util');
-const openai = new OpenAIApi(configuration);
 
 /*
  * Returns configuration for GPT setup based on the user's answer to the question.
  */
-class PromptProcessor {
+export class PromptProcessor {
     constructor() {
 
         this.questionList = [
@@ -163,16 +162,15 @@ class PromptProcessor {
 
     async sendConfigPromptToGPT(configKeyIndex, configPrompt, finalResolve) {
         try {
-            const result = await openai.createChatCompletion({
+            const result = await openai.chat.completions.create({
                 model: "gpt-4-1106-preview",
                 messages: [
-                    { role: "user", content: configPrompt }
+                    { "role": "user", "content": configPrompt }
                 ]
             }
             );
-            let responseMsg = result.data.choices[0]?.message?.content;
+            let responseMsg = result.choices[0]?.message?.content;
             this.configPromptDict[this.configPromptKeys[configKeyIndex]] = responseMsg;
-            // console.log(util.inspect(this.configPromptDict));
             finalResolve(responseMsg);
         } catch (error) {
             console.error("Error:", error);
@@ -216,5 +214,3 @@ class PromptProcessor {
         return this.fullPrompt;
     }
 }
-
-module.exports.PromptProcessor = PromptProcessor;
