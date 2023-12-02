@@ -11,7 +11,6 @@ let storyboardController = new StoryboardController();
 class ExperienceLoop {
     run() {
         console.log("ExperienceLoop.run()");  
-        let userSpeechProcessor = new UserSpeechProcessor();
 
         // Set timer for each instruction displayed before question phase
         // on the screen.
@@ -60,14 +59,7 @@ answerInput.addEventListener('keydown', function(event) {
 
 answerSubmitButton.addEventListener("click", () => {
     if (storyboardController.state == QUESTION_STATE) {
-        sendAnswerToServer_debug(storyboardController.questionNumber);
-        storyboardController.nextQuestion();
-        // If changed to mirror stage at this point, display "let's talk".
-        if (storyboardController.state == MIRROR_STATE) {
-            mirrorSelfDisplayer.display();
-        } else {
-            questionDisplayer.displayQuestion(storyboardController.questionNumber);
-        }
+        sendAnswerToServer_debug(storyboardController, mirrorSelfDisplayer, questionDisplayer);
     } 
     if (storyboardController.state == MIRROR_STATE) {
         chatWithMirrorSelf_debug();

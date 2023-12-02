@@ -5,15 +5,15 @@ class QuestionDisplayer {
         ];
 
         this.questionList = [
-            "Q1. Do you think your self is unique and certain?",
-            "Q2. How would you describe yourself?",
-            "Q3. What are your roles in life? And in your work?",
-            "Q4. Is there another you hidden inside your body?",
-            "Q5. What kind of person is he/she specifically? How does he/she treat people?  How does he/she view the world?",
-            "Q6. If you were to describe your inner self as a house, what would it be like? What do you see? Is it night or day? What season is it? Where does the light come in from?",
-            "Q7. If you had to open a room in such a house just for your other self, where would that be?",
-            "Q8. What would he/she be doing there?",
-            "Q9. Describe a scene that scares you, tell me why, and tell me what you see.",
+            "Q1. Do you think your inside self is certain?",
+            "Q2. What kind of person are you in your everyday life?",
+            "Q3. If you were to describe yourself as a house, what would it be like?",
+            "Q4. What time is the house, day, night, or noon?",
+            "Q5. What season is the house in?",
+            "Q6. Is there another self that doesn't normally appear in your daily life?",
+            "Q7-1. What kind of person is he/she specifically?",
+            "Q7-2. What do you think it would be like to be the complete opposite of yourself?",
+            "Q8. If you had to open a room in such a house just for your other self, what kind of room would that be?",
         ];
     }
 

@@ -14,7 +14,8 @@ class StoryboardController {
         // The question index of the current round.
         // Range from 0 to 8, total 9 questions.
         this.questionNumber = 0;
-        this.totalQuestionNumber = 9;
+        this.totalQuestionNumber = 8;
+        this.isQuestion6Yes = true;
 
         this.instructionTimer = 1 * 1000;
         this.questionTimer = 1 * 1000; // 5 minutes, 300 seconds
@@ -26,7 +27,7 @@ class StoryboardController {
             if (!IS_DEBUG) {
                 this.state += 1;
             }
-            
+
             if (IS_DEBUG) {
                 // debug mode don't have loading.
                 if (this.state == QUESTION_STATE) {
@@ -40,7 +41,15 @@ class StoryboardController {
 
     nextQuestion() {
         if (this.questionNumber + 1 <= this.totalQuestionNumber - 1) {
-            this.questionNumber = (this.questionNumber + 1);
+            // Question 5 yes leads to question 6, no leads to question 7.
+            if (this.questionNumber == 5) {
+                this.questionNumber = this.isQuestion6Yes ? 6 : 7;
+            } else if (this.questionNumber == 6) {
+                // skip question 7
+                this.questionNumber = 8;
+            } else {
+                this.questionNumber = (this.questionNumber + 1);
+            }
         } else {
             this.nextState();
         }
