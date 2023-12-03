@@ -32,7 +32,7 @@ if ("webkitSpeechRecognition" in window) {
     };
 
     speechRecognition.onend = function(event) {
-        console.log('Speech recognition end');
+        speechRecognition.start();
     };
 
 } else {
@@ -71,6 +71,7 @@ class ExperienceLoop {
             .then((r2 => {
                 storyboardController.state = QUESTION_STATE;
                 startQuestion(0);
+                speechRecognition.start();
             }))
             .then((finalResult) => {
                 console.log("ExperienceLoop.run(): promise chain finalResult");
@@ -89,12 +90,7 @@ answerInput.addEventListener('keydown', function(event) {
     }
 });
 
-answerInput.addEventListener('focus', function(event) {
-    speechRecognition.start();
-});
-
 answerSubmitButton.addEventListener("click", () => {
-    speechRecognition.end();
     if (storyboardController.state == QUESTION_STATE) {
         sendAnswerToServer_debug(storyboardController, mirrorSelfDisplayer, questionDisplayer);
     } 
