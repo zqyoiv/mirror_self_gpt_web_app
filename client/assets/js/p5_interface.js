@@ -1,6 +1,6 @@
 // original version: https://editor.p5js.org/qh2207/sketches/5SfuOIngg
-
 const serial = new p5.WebSerial();
+let speechRecognition;
 
 let distance = 0;
 let triggeredByDistanceSensor = false;
@@ -77,19 +77,16 @@ function setup() {
   //输入框
   inputBox = createInput("");
   inputBox.id("answer-input");
-  inputBox.position(30, height - 150);
-  inputBox.style("width", "400px"); // 增加输入框的宽度
-  inputBox.style("height", "40px"); // 增加输入框的高度
+  inputBox.position(30, windowHeight / 2 + 100);
+  inputBox.style("width", "400"); // 增加输入框的宽度
+  inputBox.style("height", "40"); // 增加输入框的高度
   inputBox.style("font-size", "24px"); // 可选：增加字体大小以改善可读性
   inputBox.hide();
+  // Bind input element with speech recognition result.
+  speechRecognition = speechRecognitionSetup(inputBox.elt);
 
-  // for debug
-  storyboardController.state = MIRROR_STATE;
-}
-
-// for debug
-function mousePressed() {
-    handleMirrorStateSubmit();
+  storyboardController.state = INSTRUCTION_STATE;
+  speechRecognition.start();
 }
 
 function draw() {
@@ -110,6 +107,23 @@ function draw() {
         inputBox.show();
     }
 }
+
+function keyPressed() {
+  if (key === '1') {
+    background(0);
+
+    if (storyboardController.state == INSTRUCTION_STATE) {
+        questionDisplayer.displayInstruction(storyboardController.instructionNumber);
+        inputBox.hide();
+        storyboardController.nextInstruction();
+    } else if (storyboardController.state == QUESTION_STATE) {
+      handleQuestionStateSubmit();
+    } else if (storyboardController.state == MIRROR_STATE) {
+      handleMirrorStateSubmit();
+    }
+  }
+}
+
 function serialEvent() {
     let incomingData = serial.readStringUntil("\n");
     if (incomingData !== null && incomingData.length > 0) {
@@ -122,7 +136,7 @@ function serialEvent() {
           // console.log("D" + distance);
           // 当没有问题正在显示且是第一个问题时，才由距离传感器触发问题显示
           if (distance < 50 
-            && storyboardController.state == -1) {
+            && storyboardController.state == INSTRUCTION_STATE) {
             storyboardController.state = QUESTION_STATE;
             background(0);
             questionDisplayer.displayInstruction(0);
@@ -179,6 +193,8 @@ function handleMirrorStateSubmit() {
     }
 }
 
+// 1. Send the user answer to the current question to server.
+// 2. Display next question.
 function handleQuestionStateSubmit() {
     let answer = inputBox.value();
     let currentQuestionIndex = storyboardController.questionNumber;
@@ -190,15 +206,16 @@ function handleQuestionStateSubmit() {
     }
     if (currentQuestionIndex > 0) {
         if (answer == "") {
-            fill("red");
-            text("Please say something.", 30, 50);
+          questionDisplayer.displayQuestion(currentQuestionIndex);
+          fill("red");
+          text("Please say something.", 30, 50);
         } else {
-            // Send last question's answer to GPT
-            sendAnswerToServer(answer, currentQuestionIndex - 1);
-            inputBox.value("");
-            questionDisplayer.displayQuestion(currentQuestionIndex);
-            storyboardController.nextQuestion(); 
-            loadingStartTime = millis();
+          // Send last question's answer to GPT
+          sendAnswerToServer(answer, currentQuestionIndex - 1);
+          inputBox.value("");
+          storyboardController.nextQuestion(); 
+          questionDisplayer.displayQuestion(storyboardController.questionNumber);
+          loadingStartTime = millis();
         }
     }               
 }

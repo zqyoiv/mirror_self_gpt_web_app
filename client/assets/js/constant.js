@@ -1,3 +1,4 @@
+const INSTRUCTION_STATE = -1;
 const QUESTION_STATE = 0;
 const LOADING_STATE = 1;
 const MIRROR_STATE = 2;

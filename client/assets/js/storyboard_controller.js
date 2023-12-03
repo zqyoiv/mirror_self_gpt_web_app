@@ -10,7 +10,11 @@ class StoryboardController {
         // 1 is loading state,
         // 2 is mirror chatting state,
         // 3 is end.
-        this.state = -1;
+        this.state = INSTRUCTION_STATE;
+
+        this.instructionNumber = 0;
+        this.totalInstructionNumber = 3;
+
         // The question index of the current round.
         // Range from 0 to 8, total 9 questions.
         this.questionNumber = 0;
@@ -36,6 +40,14 @@ class StoryboardController {
                     this.state = END_STATE;
                 }
             }
+        }
+    }
+
+    nextInstruction() {
+        if (this.instructionNumber + 1 <= this.totalInstructionNumber - 1) {
+            this.instructionNumber += 1;
+        } else {
+            this.nextState();
         }
     }
 

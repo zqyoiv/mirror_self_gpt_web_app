@@ -67,8 +67,14 @@ async function chatWithMirrorSelf(chat) {
             setErrorForResponse(responseElement, `HTTP Error: ${await response.text()}`);
             return;
         }
-        const responseText = await response.text();
-        return responseText;
+        const responseObject = await response.json();
+        let mirrorText = responseObject["mirrorText"];
+        if (responseObject["path"]) {
+            let audio = new Audio(responseObject["path"]);
+            audio.play();
+        }
+        addResponse(false, `<div>Mirror response: \n${mirrorText}</div>`);
+        return mirrorText;
     } catch (err) {
         const errorMsg = error.response ? error.response.data.error : `${error}`;
         console.error(errorMsg);
@@ -82,6 +88,46 @@ function generateUniqueId() {
     const hexadecimalString = randomNumber.toString(16);
 
     return `id-${timestamp}-${hexadecimalString}`;
+}
+
+// ========================================================
+//     Speech recognition.
+// ========================================================
+
+function speechRecognitionSetup(inputBox) {
+  let speechRecognition;
+  if ("webkitSpeechRecognition" in window) {
+    // Speech Recognition Stuff goes here
+    speechRecognition = new webkitSpeechRecognition();
+    speechRecognition.continuous = true;
+    speechRecognition.lang = "en-US";
+    // Whether to return interim results (results that are not yet final)
+    speechRecognition.interimResults = true;
+
+    // Define the event handler for the result event
+    speechRecognition.onresult = function(event) {
+        for (var i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                // Final transcript of the recognized speech
+                var transcript = event.results[i][0].transcript;
+                inputBox.value = inputBox.value + " " + transcript;
+                console.log('Final result: ' + transcript);
+            } else {
+                // Interim result
+                var interimTranscript = event.results[i][0].transcript;
+                console.log('Interim result: ' + interimTranscript);
+            }
+        }
+    };
+
+    speechRecognition.onend = function(event) {
+        speechRecognition.start();
+    };
+
+  } else {
+    console.log("Speech Recognition Not Available");
+  }
+  return speechRecognition;
 }
 
 // ========================================================
