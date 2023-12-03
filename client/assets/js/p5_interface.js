@@ -189,9 +189,12 @@ function handleMirrorStateSubmit() {
     let answer = inputBox.value();
     mirrorSelfDisplayer.display();
     
-    if (answer == "") {
+    // When type less than 3 words, show error message.
+    if (answer == "" || ((storyboardController.questionNumber != 5) 
+                        && (storyboardController.questionNumber != 0) 
+                        && answer.split(" ") >= 3)) {
         fill("red");
-        text("Please say something.", 30, 50);
+        text("Mind sharing a bit more?", 30, 50);
     } else {
         chatWithMirrorSelf(answer, (response) => {
             redrawBackgroundAndSetTextConfig();
