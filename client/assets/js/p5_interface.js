@@ -105,9 +105,15 @@ function draw() {
     } else if (storyboardController.state == MIRROR_STATE) {
         mirrorSelfDisplayer.display();
         inputBox.show();
+        let countDownTimer = storyboardController.mirrorCountDowntext();
+        fill('red');
+        text(countDownTimer, 30, 50);
+    } else if (storyboardController.state == END_STATE) {
+      location.reload();
     }
 }
 
+// Debug workflow, simulate button pushing.
 function keyPressed() {
   if (key === '1') {
     background(0);

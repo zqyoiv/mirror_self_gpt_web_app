@@ -22,14 +22,18 @@ class StoryboardController {
         this.isQuestion6Yes = true;
 
         this.instructionTimer = 1 * 1000;
-        this.questionTimer = 1 * 1000; // 5 minutes, 300 seconds
-        this.mirrorChatTimer = 1 * 1000; // 5 minutes, 300 seconds
+        this.mirrorTimer = 10;
+        this.mirrorStartTimer = "";
     }
 
     nextState() {
         if (this.state < END_STATE) {
             if (!IS_DEBUG) {
                 this.state += 1;
+                if (this.state == MIRROR_STATE && this.mirrorStartTimer == "") {
+                    this.mirrorStartTimer = millis();
+                    console.log("mirrorStartTimer start: " + this.mirrorStartTimer);
+                }
             }
 
             if (IS_DEBUG) {
@@ -49,6 +53,26 @@ class StoryboardController {
         } else {
             this.nextState();
         }
+    }
+
+    mirrorCountDowntext() {
+        // Calculate the elapsed time
+        let elapsedTime = (millis() - this.mirrorStartTimer) / 1000;
+
+        // Calculate remaining time
+        let remainingTime = this.mirrorTimer - elapsedTime;
+
+        if (remainingTime <= 0) {
+            this.state = END_STATE;
+        }
+
+        // Convert to minutes and seconds
+        let minutes = floor(remainingTime / 60);
+        let seconds = floor(remainingTime % 60);
+
+        // Format the time
+        let displayTime = nf(minutes, 2) + ":" + nf(seconds, 2);
+        return displayTime;
     }
 
     nextQuestion() {
@@ -71,12 +95,8 @@ class StoryboardController {
         return this.instructionTimer;
     }
 
-    getQuestionTimer() {
-        return this.questionTimer;
-    }
-
-    getMirrorChatTimer() {
-        return this.mirrorChatTimer;
+    getMirrorTimer() {
+        return this.mirrorTimer;
     }
 
     getTotalQuestionNumber () {
