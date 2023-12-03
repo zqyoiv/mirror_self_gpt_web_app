@@ -101,6 +101,7 @@ function draw() {
             windowWidth - 40,
             windowHeight / 2 - 50
         );
+        inputBox.hide();
         updateLoadingText();
     } else if (storyboardController.state == MIRROR_STATE) {
         mirrorSelfDisplayer.display();
@@ -122,6 +123,11 @@ function keyPressed() {
         questionDisplayer.displayInstruction(storyboardController.instructionNumber);
         inputBox.hide();
         storyboardController.nextInstruction();
+        if (!delayStarted) {
+          delayStarted = true;
+          delayEndTime = millis() + delayTime;
+          record();
+        }
     } else if (storyboardController.state == QUESTION_STATE) {
       handleQuestionStateSubmit();
     } else if (storyboardController.state == MIRROR_STATE) {

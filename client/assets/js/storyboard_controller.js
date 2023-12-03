@@ -90,16 +90,4 @@ class StoryboardController {
             this.nextState();
         }
     }
-
-    getInstructionTimer() {
-        return this.instructionTimer;
-    }
-
-    getMirrorTimer() {
-        return this.mirrorTimer;
-    }
-
-    getTotalQuestionNumber () {
-        return this.totalQuestionNumber;
-    }
 }
