@@ -82,12 +82,9 @@ class StoryboardController {
         // because we need to push button to submit answer for q8 and start loading.
         if (this.questionNumber + 1 <= this.totalQuestionNumber) {
             // Question 5 yes leads to question 6, no leads to question 7.
-            if (this.questionNumber == 6) {
-                console.log("next question from:this.isQuestion6Yes: " + this.isQuestion6Yes);
-                this.questionNumber = this.isQuestion6Yes ? 7 : 8;
-            } else if (this.questionNumber == 7) {
+            if (this.questionNumber == 6 || this.questionNumber == 7) {
                 // skip question 7
-                this.questionNumber = 9;
+                this.questionNumber = 8;
             } else {
                 this.questionNumber = (this.questionNumber + 1);
             }

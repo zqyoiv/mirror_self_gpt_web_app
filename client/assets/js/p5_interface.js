@@ -196,22 +196,30 @@ function handleQuestionStateSubmit() {
         // Send last question's answer to GPT
         sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
         inputBox.value("");
-        questionDisplayer.displayQuestion(currentQuestionIndex);
 
+        if (lastQuestionIndex == 5) {
+          if (answer.indexOf("es") != -1) {
+            storyboardController.isQuestion6Yes = true;
+            storyboardController.questionNumber = 6;
+            currentQuestionIndex = storyboardController.questionNumber;
+            questionDisplayer.displayQuestion(currentQuestionIndex);
+          } else {
+            storyboardController.isQuestion6Yes = false;
+            storyboardController.questionNumber = 7;
+            currentQuestionIndex = storyboardController.questionNumber;
+            questionDisplayer.displayQuestion(currentQuestionIndex);
+            console.log("---- updates isQuestion6Yes: false");
+          }
+        } else {
+          questionDisplayer.displayQuestion(currentQuestionIndex);
+        }
+
+        // Play audio.
         if (lastQuestionIndex == 3) {
           playDayNightMusicFromText(answer);
         } else if (lastQuestionIndex == 4) {
           playSeasonMusicFromText(answer);
-        } else if (lastQuestionIndex == 5) {
-          if (answer.indexOf("es") != -1) {
-            storyboardController.isQuestion6Yes = true;
-            console.log("---- updates isQuestion6Yes: yes");
-          } else {
-            storyboardController.isQuestion6Yes = false;
-            console.log("---- updates isQuestion6Yes: false");
-          }
         }
-        
 
         if (currentQuestionIndex == 9) {
           storyboardController.nextState();

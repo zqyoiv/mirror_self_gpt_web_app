@@ -174,7 +174,7 @@ app.post('/chat-with-config-prompt', async (req, res) => {
                 { "role": "system", "content": promptConfiguration }
             ]
         });
-        console.log("mirror: " + result.choices[0]?.message?.content);
+        console.log("mirror full response: " + result.choices[0]?.message?.content);
         return result.choices[0]?.message?.content;
     
     }
