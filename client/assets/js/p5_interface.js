@@ -16,12 +16,8 @@ let delayEndTime = 0; // 延时结束的时间
 
 let sentSignal = false;
 
-let recording = false;
-let recorder;
 let chunks = [];
 let capture;
-let video;
-let isVideoPlaying = false;
 const fr = 30;
 
 let loadingDuration = 5000;
@@ -36,6 +32,10 @@ let userInputs = []; // 存储用户输入的内容
 let mirrorSelfDisplayer = new MirrorSelfDisplayer();
 let questionDisplayer = new QuestionDisplayer();
 let storyboardController = new StoryboardController();
+
+function preload() {
+  preloadAudio();
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -63,29 +63,21 @@ function setup() {
 
   serial.write("All Set");
 
-  //WebCam捕捉视频
-  // let cnv = createCanvas(windowWidth, windowHeight); // 设置画布为全屏
-  // cnv.style('display', 'block'); // 确保画布没有额外的边距
-  capture = createCapture(VIDEO, function () {
-    // 根据3:4的竖屏格式设置视频尺寸
-    let captureHeight = windowHeight; // 视频高度与画布高度一致
-    let captureWidth = (captureHeight * 3) / 4; // 视频宽度为高度的3/4
-    capture.size(captureWidth, captureHeight);
-    capture.hide();
-  });
-
   //输入框
   inputBox = createInput("");
   inputBox.id("answer-input");
   inputBox.position(30, windowHeight / 2 + 100);
-  inputBox.style("width", "400"); // 增加输入框的宽度
-  inputBox.style("height", "40"); // 增加输入框的高度
+  inputBox.style("width", "600"); // 增加输入框的宽度
+  inputBox.style("height", "100"); // 增加输入框的高度
   inputBox.style("font-size", "24px"); // 可选：增加字体大小以改善可读性
-  inputBox.hide();
   // Bind input element with speech recognition result.
   speechRecognition = speechRecognitionSetup(inputBox.elt);
 
   storyboardController.state = INSTRUCTION_STATE;
+  questionDisplayer.displayInstruction(storyboardController.instructionNumber);
+  inputBox.hide();
+  storyboardController.nextInstruction();
+  
   speechRecognition.start();
 }
 
@@ -118,16 +110,10 @@ function draw() {
 function keyPressed() {
   if (key === '1') {
     background(0);
-
     if (storyboardController.state == INSTRUCTION_STATE) {
         questionDisplayer.displayInstruction(storyboardController.instructionNumber);
         inputBox.hide();
         storyboardController.nextInstruction();
-        if (!delayStarted) {
-          delayStarted = true;
-          delayEndTime = millis() + delayTime;
-          record();
-        }
     } else if (storyboardController.state == QUESTION_STATE) {
       handleQuestionStateSubmit();
     } else if (storyboardController.state == MIRROR_STATE) {
@@ -139,33 +125,16 @@ function keyPressed() {
 function serialEvent() {
     let incomingData = serial.readStringUntil("\n");
     if (incomingData !== null && incomingData.length > 0) {
-      // Distance sensor
-      if (incomingData.startsWith("D:")) {
-        let distanceStr = incomingData.substring(2).trim();
-        let parsedDistance = parseInt(distanceStr);
-        if (!isNaN(parsedDistance)) {
-          distance = parsedDistance;
-          // console.log("D" + distance);
-          // 当没有问题正在显示且是第一个问题时，才由距离传感器触发问题显示
-          if (distance < 50 
-            && storyboardController.state == INSTRUCTION_STATE) {
-            storyboardController.state = QUESTION_STATE;
-            background(0);
-            questionDisplayer.displayInstruction(0);
-            inputBox.hide();
-
-            delayStarted = true;
-            delayEndTime = millis() + delayTime;
-            record();
-          }
-        }
         // Button (guide --> question --> mirror)
-      } else if (incomingData.trim() === "B:1") {
-        if (storyboardController.state == QUESTION_STATE) {
-            handleQuestionStateSubmit();
-        }
-        if (storyboardController.state == MIRROR_STATE) {
-            handleMirrorStateSubmit();
+      if (incomingData.trim() === "B:1") {
+        if (storyboardController.state == INSTRUCTION_STATE) {
+          questionDisplayer.displayInstruction(storyboardController.instructionNumber);
+          inputBox.hide();
+          storyboardController.nextInstruction();
+        } else if (storyboardController.state == QUESTION_STATE) {
+          handleQuestionStateSubmit();
+        } else if (storyboardController.state == MIRROR_STATE) {
+          handleMirrorStateSubmit();
         }
       }
     }
@@ -178,9 +147,6 @@ function updateLoadingText() {
   loadingText = ".".repeat(loadingEllipses);
   if (currentTime - loadingStartTime > loadingDuration) {
     serial.write("All Set");
-    setTimeout(() => {
-        recorder.stop();
-    }, 2000);
     storyboardController.nextState();
   }
 }
@@ -210,43 +176,52 @@ function handleMirrorStateSubmit() {
 
 // 1. Send the user answer to the current question to server.
 // 2. Display next question.
+
 function handleQuestionStateSubmit() {
     let answer = inputBox.value();
     let currentQuestionIndex = storyboardController.questionNumber;
+    let lastQuestionIndex = currentQuestionIndex - 1;
     inputBox.show();
 
     if (currentQuestionIndex == 0) {
+        questionDisplayer.displayQuestion(storyboardController.questionNumber);
+        storyboardController.nextQuestion();
+    } else if (currentQuestionIndex > 0) {
+      if (answer == "") {
+        // Block user from submitting empty answer.
+        questionDisplayer.displayQuestion(lastQuestionIndex);
+        fill("red");
+        text("Please say something.", 30, 50);
+      } else {
+        // Send last question's answer to GPT
+        sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
+        inputBox.value("");
         questionDisplayer.displayQuestion(currentQuestionIndex);
-        storyboardController.nextQuestion();  
-    }
-    if (currentQuestionIndex > 0) {
-        if (answer == "") {
-          questionDisplayer.displayQuestion(currentQuestionIndex);
-          fill("red");
-          text("Please say something.", 30, 50);
-        } else {
-          // Send last question's answer to GPT
-          sendAnswerToServer(answer, currentQuestionIndex - 1);
-          inputBox.value("");
-          storyboardController.nextQuestion(); 
-          questionDisplayer.displayQuestion(storyboardController.questionNumber);
-          loadingStartTime = millis();
-        }
-    }               
-}
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-  // 如果视频正在播放，调整其大小和位置以保持竖屏比例
-  if (isVideoPlaying) {
-    let captureHeight = windowHeight;
-    let captureWidth = (captureHeight * 1) / 4; // 同上，保持竖屏比例
-    video.size(captureWidth, captureHeight);
-    video.position(
-      (windowWidth - video.width) / 2,
-      windowHeight - video.height
-    );
-  }
+        if (lastQuestionIndex == 3) {
+          playDayNightMusicFromText(answer);
+        } else if (lastQuestionIndex == 4) {
+          playSeasonMusicFromText(answer);
+        } else if (lastQuestionIndex == 5) {
+          if (answer.indexOf("es") != -1) {
+            storyboardController.isQuestion6Yes = true;
+            console.log("---- updates isQuestion6Yes: yes");
+          } else {
+            storyboardController.isQuestion6Yes = false;
+            console.log("---- updates isQuestion6Yes: false");
+          }
+        }
+        
+
+        if (currentQuestionIndex == 9) {
+          storyboardController.nextState();
+        } else {
+          storyboardController.nextQuestion(); 
+        }
+        
+        loadingStartTime = millis();
+      }
+  }               
 }
 
 function redrawBackgroundAndSetTextConfig() {

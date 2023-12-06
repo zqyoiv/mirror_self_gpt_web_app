@@ -116,6 +116,12 @@ div#prompt-input {
     overflow: auto;
 }
 
+input#answer-input {
+    color:black;
+    width: 600px;
+    height: 100px;
+}
+
 #answer-input:focus,
 #prompt-input:focus {
     outline: none !important;

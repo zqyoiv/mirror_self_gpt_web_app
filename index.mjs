@@ -15,6 +15,7 @@ import OpenAI from 'openai';
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
+const model_name = "gpt-4-1106-preview";
 
 import { PromptProcessor} from './prompt_processor.mjs';
 import { get } from 'http';
@@ -92,7 +93,7 @@ app.post('/get-prompt-result', async (req, res) => {
         }
         if (model === 'chatgpt') {
             const result = await openai.chat.completions.create({
-                model:"gpt-4-1106-preview",
+                model:model_name,
                 messages: [
                     { "role": "user", "content": prompt }
                 ]
@@ -167,7 +168,7 @@ app.post('/chat-with-config-prompt', async (req, res) => {
 
     async function getChatResult(chat) {
         const result = await openai.chat.completions.create({
-            model:"gpt-4-1106-preview",
+            model:model_name,
             messages: [
                 { "role": "user", "content": chat },
                 { "role": "system", "content": promptConfiguration }

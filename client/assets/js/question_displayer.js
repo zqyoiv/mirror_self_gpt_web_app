@@ -10,7 +10,7 @@ class QuestionDisplayer {
             "Q1. Do you think your inside self is certain?",
             "Q2. What kind of person are you in your everyday life?",
             "Q3. If you were to describe yourself as a house, what would it be like?",
-            "Q4. What time is the house, day, night, or noon?",
+            "Q4. What time is the house, day or night?",
             "Q5. What season is the house in?",
             "Q6. Is there another self that doesn't normally appear in your daily life?",
             "Q7-1. What kind of person is he/she specifically?",
@@ -44,6 +44,7 @@ class QuestionDisplayer {
     }
 
     displayQuestion(questionNumber) {
+        console.log("display question number: " + questionNumber);
         if (questionNumber < this.questionList.length) {
             if (IS_DEBUG) {
                 // Add a HTML content rendering the string of the qudstionList[questionNumber].

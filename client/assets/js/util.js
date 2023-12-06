@@ -27,7 +27,7 @@ function addResponse(selfFlag, prompt) {
  * In Question - Answer state, send user answer to server to update GPT
  * configuration.
  */
-async function sendAnswerToServer(answer, questionNumber) {
+async function sendAnswerToServer(answer, questionNumber, storyboardController) {
     try {
         // Send a POST request to the API with the prompt in the request body
         const response = await fetch('/question-answer', {
@@ -38,6 +38,13 @@ async function sendAnswerToServer(answer, questionNumber) {
                 questionNumber
             })
         });
+        if (questionNumber == 5) {
+          if (answer.indexOf('es') != -1) { 
+            storyboardController.isQuestion6Yes = true;
+          } else { 
+            storyboardController.isQuestion6Yes = false;
+          }
+        }
         if (!response.ok) {
             setErrorForResponse(responseElement, `HTTP Error: ${await response.text()}`);
             return;
@@ -111,11 +118,12 @@ function speechRecognitionSetup(inputBox) {
                 // Final transcript of the recognized speech
                 var transcript = event.results[i][0].transcript;
                 inputBox.value = inputBox.value + " " + transcript;
-                console.log('Final result: ' + transcript);
+                inputBox.textContent = inputBox.value;
+                // console.log('Final result: ' + transcript);
             } else {
                 // Interim result
                 var interimTranscript = event.results[i][0].transcript;
-                console.log('Interim result: ' + interimTranscript);
+                // console.log('Interim result: ' + interimTranscript);
             }
         }
     };
@@ -187,49 +195,85 @@ function makePortButton() {
   }
 
 // ========================================================
-//      Video recording related utility functions.
+//      Audio play related utility functions.
 // ========================================================
 
-function record() {
-    if (video) {
-      video.remove();
-      video = null;
-    }
-    chunks.length = 0;
-    let stream = capture.elt.srcObject;
-    recorder = new MediaRecorder(stream);
-    recorder.ondataavailable = (e) => {
-      if (e.data.size) {
-        chunks.push(e.data);
-      }
-    };
-    recorder.onstop = exportVideo;
-    isVideoPlaying = false;
-    recording = true;
-    recorder.start();
-    console.log("recording started!");
+const seasonAudioUrls = [
+  'assets/audio/season/spring2.mp3',
+  'assets/audio/season/summer.mp3',
+  'assets/audio/season/autumn.mp3',
+  'assets/audio/season/winter.mp3',
+];
+
+const dayAudioUrls = [
+  'assets/audio/day/morning.wav',
+  'assets/audio/day/night.mp3',
+];
+
+let dayAudioFiles;
+let seasonAudioFiles;
+
+function preloadAudio() {
+  dayAudioFiles = dayAudioUrls.map(url => {
+    const audio = new Audio();
+    audio.src = url;
+    audio.preload = 'auto'; 
+    audio.load();
+    return audio;
+  });
+
+  seasonAudioFiles = seasonAudioUrls.map(url => {
+    const audio = new Audio();
+    audio.src = url;
+    audio.preload = 'auto'; 
+    audio.load();
+    return audio;
+  });
+}
+
+function playSeasonMusicFromText(text) {
+  let season = 0;
+  text = text.toLowerCase();
+  if (text.indexOf("spring") != -1) {
+    season = 1;
+  } else if (text.indexOf("summer") != -1) {
+    season = 2;
+  } else if (text.indexOf("autumn") != -1) {
+    season = 3;
+  } else if (text.indexOf("winter") != -1) {
+    season = 4;
   }
-  
-  function exportVideo(e) {
-    recording = false;
-    var blob = new Blob(chunks, { type: "video/webm" });
-    video = createVideo(URL.createObjectURL(blob), videoLoaded);
+
+  switch (season) {
+    case 1:
+      seasonAudioFiles[0].play();
+      break;
+    case 2:
+      seasonAudioFiles[1].play();
+      break;
+    case 3:
+      seasonAudioFiles[2].play();
+      break;
+    case 4:
+      seasonAudioFiles[3].play();
+      break;
   }
-  
-  function videoLoaded() {
-    video.loop();
-    video.volume(0);
-    // 设置视频大小为竖屏比例
-    let captureHeight = windowHeight;
-    let captureWidth = (captureHeight * 3) / 4; // 确保这里是竖屏比例，比如3:4
-    video.size(captureWidth, captureHeight);
-  
-    // 设置延迟播放
-    //   setTimeout(() => {
-    //     video.play();
-    //     isVideoPlaying = true;
-    //   }, 10000);  // 延迟3000毫秒（3秒）
-  
-    // 设置视频在画布下方居中播放
-    video.position(windowWidth/2, 0);
+}
+
+function playDayNightMusicFromText(text) {
+  let timeIndicator = 0;
+  text = text.toLowerCase();
+  if (text.indexOf("day") != -1) {
+    timeIndicator = 1;
+  } else if (text.indexOf("night") != -1) {
+    timeIndicator = 2;
   }
+  switch (timeIndicator) {
+    case 1:
+      dayAudioFiles[0].play();
+      break;
+    case 2:
+      dayAudioFiles[1].play();
+      break;
+  }
+}

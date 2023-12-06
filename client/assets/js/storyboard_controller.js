@@ -18,11 +18,11 @@ class StoryboardController {
         // The question index of the current round.
         // Range from 0 to 8, total 9 questions.
         this.questionNumber = 0;
-        this.totalQuestionNumber = 8;
+        this.totalQuestionNumber = 9;
         this.isQuestion6Yes = true;
 
         this.instructionTimer = 1 * 1000;
-        this.mirrorTimer = 10;
+        this.mirrorTimer = 180;
         this.mirrorStartTimer = "";
     }
 
@@ -48,6 +48,7 @@ class StoryboardController {
     }
 
     nextInstruction() {
+        console.log("next instruction from: " + this.instructionNumber);
         if (this.instructionNumber + 1 <= this.totalInstructionNumber - 1) {
             this.instructionNumber += 1;
         } else {
@@ -76,18 +77,20 @@ class StoryboardController {
     }
 
     nextQuestion() {
-        if (this.questionNumber + 1 <= this.totalQuestionNumber - 1) {
+        console.log("next question from: " + this.questionNumber);
+        // Intentionally make questionNumber out of bound for the last question,
+        // because we need to push button to submit answer for q8 and start loading.
+        if (this.questionNumber + 1 <= this.totalQuestionNumber) {
             // Question 5 yes leads to question 6, no leads to question 7.
-            if (this.questionNumber == 5) {
-                this.questionNumber = this.isQuestion6Yes ? 6 : 7;
-            } else if (this.questionNumber == 6) {
+            if (this.questionNumber == 6) {
+                console.log("next question from:this.isQuestion6Yes: " + this.isQuestion6Yes);
+                this.questionNumber = this.isQuestion6Yes ? 7 : 8;
+            } else if (this.questionNumber == 7) {
                 // skip question 7
-                this.questionNumber = 8;
+                this.questionNumber = 9;
             } else {
                 this.questionNumber = (this.questionNumber + 1);
             }
-        } else {
-            this.nextState();
         }
     }
 }

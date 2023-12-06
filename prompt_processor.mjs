@@ -224,7 +224,7 @@ export class PromptProcessor {
     async sendConfigPromptToGPT(configKeyIndex, configPrompt, finalResolve) {
         try {
             const result = await openai.chat.completions.create({
-                model: "gpt-4-1106-preview",
+                model: model_name,
                 messages: [
                     { "role": "user", "content": configPrompt }
                 ]

@@ -89,3 +89,38 @@ function findMirrorSelfText(responseText) {
     let mirrorSelfText = responseText.split("Mirror-self: ")[1];
     return mirrorSelfText;
 }
+
+function speechRecognitionSetup_debug() {
+    let speechRecognition;
+    if ("webkitSpeechRecognition" in window) {
+      // Speech Recognition Stuff goes here
+      speechRecognition = new webkitSpeechRecognition();
+      speechRecognition.continuous = true;
+      speechRecognition.lang = "en-US";
+      speechRecognition.interimResults = true; // Whether to return interim results (results that are not yet final)
+  
+      // Define the event handler for the result event
+      speechRecognition.onresult = function(event) {
+          for (var i = event.resultIndex; i < event.results.length; ++i) {
+              if (event.results[i].isFinal) {
+                  // Final transcript of the recognized speech
+                  var transcript = event.results[i][0].transcript;
+                  answerInput.innerText = answerInput.innerText + " " + transcript;
+                  console.log('Final result: ' + transcript);
+              } else {
+                  // Interim result
+                  var interimTranscript = event.results[i][0].transcript;
+                  console.log('Interim result: ' + interimTranscript);
+              }
+          }
+      };
+  
+      speechRecognition.onend = function(event) {
+          speechRecognition.start();
+      };
+  
+    } else {
+      console.log("Speech Recognition Not Available");
+    }
+    return speechRecognition;
+  }
