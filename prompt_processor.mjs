@@ -1,8 +1,8 @@
 import OpenAI from 'openai';
-const model_name = "gpt-3.5-turbo-0613";
+const model_name = "gpt-4-1106-preview";
 
 const openai = new OpenAI({
-    apiKey: "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",
+    apiKey: process.env.OPENAI_API_KEY,
 });
 
 /*
