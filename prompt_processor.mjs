@@ -54,6 +54,9 @@ export class PromptProcessor {
     updatePromptWithAnswer(questionIndex, userAnswer) {
         let questionNumber = questionIndex + 1;
         this.answerList[questionIndex] = userAnswer;
+        // if (questionIndex == 2) {
+        //     console.log("--------------- question 2 answer: " + userAnswer + "\n " + this.answerList[questionIndex]);
+        // }
         let configPrompt = "";
         let configKeyIndex = 0;
 
@@ -74,7 +77,7 @@ export class PromptProcessor {
 
                     break;
                 case 4:
-                    configPrompt = this.q345ConfigPrompt(this.answerList[2], 
+                    configPrompt = this.q345ConfigPrompt(this.answerList[2],
                                                          this.answerList[3], 
                                                          this.answerList[4]);
                     configKeyIndex = 1;
@@ -150,7 +153,7 @@ export class PromptProcessor {
      * Use the language of a scene and don't change it, just transform it, as in "Here is a... The house of...“.
      */
     q345ConfigPrompt(answer3, answer4, answer5) {
-        return `Utilize the language of a specific scene, maintaining its original form. Avoid introducing any unnecessary details. Simply transform it in the manner of 'Here is the house of the user, ...'——` +
+        return `Utilize the language of a specific scene, maintaining its original form. Avoid introducing any unnecessary details. Simply transform it in the manner of 'Here is the house of the user, ...'——\n`
             + answer3 + "\n"
             + answer4 + "\n"
             + answer5;
@@ -219,7 +222,7 @@ export class PromptProcessor {
             );
             let responseMsg = result.choices[0]?.message?.content;
             this.configPromptDict[this.configPromptKeys[configKeyIndex]] = responseMsg;
-            console.log(configPrompt +"\n" + responseMsg+ "\n\n\n");
+            console.log(configPrompt +"\n\n resp:\n" + responseMsg+ "\n\n\n");
             finalResolve(responseMsg);
         } catch (error) {
             console.error("Error:", error);
