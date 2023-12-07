@@ -109,16 +109,7 @@ function draw() {
 // Debug workflow, simulate button pushing.
 function keyPressed() {
   if (key === '1') {
-    background(0);
-    if (storyboardController.state == INSTRUCTION_STATE) {
-        questionDisplayer.displayInstruction(storyboardController.instructionNumber);
-        inputBox.hide();
-        storyboardController.nextInstruction();
-    } else if (storyboardController.state == QUESTION_STATE) {
-      handleQuestionStateSubmit();
-    } else if (storyboardController.state == MIRROR_STATE) {
-      handleMirrorStateSubmit();
-    }
+    pushButtonNextStepHandler();
   }
 }
 
@@ -127,16 +118,21 @@ function serialEvent() {
     if (incomingData !== null && incomingData.length > 0) {
         // Button (guide --> question --> mirror)
       if (incomingData.trim() === "B:1") {
-        if (storyboardController.state == INSTRUCTION_STATE) {
-          questionDisplayer.displayInstruction(storyboardController.instructionNumber);
-          inputBox.hide();
-          storyboardController.nextInstruction();
-        } else if (storyboardController.state == QUESTION_STATE) {
-          handleQuestionStateSubmit();
-        } else if (storyboardController.state == MIRROR_STATE) {
-          handleMirrorStateSubmit();
-        }
+        pushButtonNextStepHandler();
       }
+    }
+}
+
+function pushButtonNextStepHandler() {
+  background(0);
+    if (storyboardController.state == INSTRUCTION_STATE) {
+        questionDisplayer.displayInstruction(storyboardController.instructionNumber);
+        inputBox.hide();
+        storyboardController.nextInstruction();
+    } else if (storyboardController.state == QUESTION_STATE) {
+      handleQuestionStateSubmit();
+    } else if (storyboardController.state == MIRROR_STATE) {
+      handleMirrorStateSubmit();
     }
 }
 
@@ -147,6 +143,7 @@ function updateLoadingText() {
   loadingText = ".".repeat(loadingEllipses);
   if (currentTime - loadingStartTime > loadingDuration) {
     serial.write("All Set");
+    console.log("--------------------- All set sent ----------------------");
     storyboardController.nextState();
   }
 }

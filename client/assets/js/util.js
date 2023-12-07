@@ -206,7 +206,7 @@ const seasonAudioUrls = [
 ];
 
 const dayAudioUrls = [
-  'assets/audio/day/morning.wav',
+  'assets/audio/day/day.wav',
   'assets/audio/day/night.mp3',
 ];
 
