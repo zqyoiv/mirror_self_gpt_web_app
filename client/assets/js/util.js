@@ -119,11 +119,11 @@ function speechRecognitionSetup(inputBox) {
                 var transcript = event.results[i][0].transcript;
                 inputBox.value = inputBox.value + " " + transcript;
                 inputBox.textContent = inputBox.value;
-                // console.log('Final result: ' + transcript);
+                console.log('Final result: ' + transcript);
             } else {
                 // Interim result
                 var interimTranscript = event.results[i][0].transcript;
-                // console.log('Interim result: ' + interimTranscript);
+                console.log('Interim result: ' + interimTranscript);
             }
         }
     };
