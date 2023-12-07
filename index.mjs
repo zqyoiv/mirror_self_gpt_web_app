@@ -16,6 +16,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 const model_name = "gpt-4-1106-preview";
+let response_counter = 0;
 
 import { PromptProcessor} from './prompt_processor.mjs';
 import { get } from 'http';
@@ -226,7 +227,9 @@ app.post('/text-to-speech', async (req, res) => {
 });
 
 async function sendTextToSpeech(text) {
-    const speechFilePath = "./client/speech.mp3";
+    const fileName = "speech" + response_counter + ".mp3";
+    response_counter += 1;
+    const speechFilePath = "./client/" + fileName;
     const speechFile = path.resolve(speechFilePath);
     const mp3 = await openai.audio.speech.create({
         model: "tts-1",
@@ -235,7 +238,7 @@ async function sendTextToSpeech(text) {
     });
     const buffer = Buffer.from(await mp3.arrayBuffer());
     await fs.promises.writeFile(speechFile, buffer);
-    return "./speech.mp3";
+    return "./" + fileName;
 }
 
 const port = process.env.PORT || 3001;
