@@ -245,20 +245,23 @@ function playSeasonMusicFromText(text) {
     season = 4;
   }
 
+  let seasonAudio;
   switch (season) {
     case 1:
-      seasonAudioFiles[0].play();
+      seasonAudio = seasonAudioFiles[0];
       break;
     case 2:
-      seasonAudioFiles[1].play();
+      seasonAudio = seasonAudioFiles[1];
       break;
     case 3:
-      seasonAudioFiles[2].play();
+      seasonAudio = seasonAudioFiles[2];
       break;
     case 4:
-      seasonAudioFiles[3].play();
+      seasonAudio = seasonAudioFiles[3];
       break;
   }
+  seasonAudio.loop = true;
+  seasonAudio.play();
 }
 
 function playDayNightMusicFromText(text) {
@@ -271,9 +274,11 @@ function playDayNightMusicFromText(text) {
   }
   switch (timeIndicator) {
     case 1:
+      dayAudioFiles[0].loop = true;
       dayAudioFiles[0].play();
       break;
     case 2:
+      dayAudioFiles[1].loop = true;
       dayAudioFiles[1].play();
       break;
   }
