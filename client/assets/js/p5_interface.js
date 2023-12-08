@@ -182,6 +182,7 @@ function handleQuestionStateSubmit() {
     if (currentQuestionIndex == 0) {
         questionDisplayer.displayQuestion(storyboardController.questionNumber);
         storyboardController.nextQuestion();
+        inputBox.value("");
     } else if (currentQuestionIndex > 0) {
       if (answer == "") {
         // Block user from submitting empty answer.
@@ -199,15 +200,18 @@ function handleQuestionStateSubmit() {
             storyboardController.questionNumber = 6;
             currentQuestionIndex = storyboardController.questionNumber;
             questionDisplayer.displayQuestion(currentQuestionIndex);
+            inputBox.value("");
           } else {
             storyboardController.isQuestion6Yes = false;
             storyboardController.questionNumber = 7;
             currentQuestionIndex = storyboardController.questionNumber;
             questionDisplayer.displayQuestion(currentQuestionIndex);
+            inputBox.value("");
             console.log("---- updates isQuestion6Yes: false");
           }
         } else {
           questionDisplayer.displayQuestion(currentQuestionIndex);
+          inputBox.value("");
         }
 
         // Play audio.

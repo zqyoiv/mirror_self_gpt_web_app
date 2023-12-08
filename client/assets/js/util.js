@@ -260,8 +260,10 @@ function playSeasonMusicFromText(text) {
       seasonAudio = seasonAudioFiles[3];
       break;
   }
-  seasonAudio.loop = true;
-  seasonAudio.play();
+  if (seasonAudio) {
+    seasonAudio.loop = true;
+    seasonAudio.play();
+  }
 }
 
 function playDayNightMusicFromText(text) {
