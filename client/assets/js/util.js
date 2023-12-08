@@ -2,6 +2,8 @@ let IS_DEBUG = false;
 let gptAudio;
 let speechRecognition;
 
+let recordingLabel;
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -60,6 +62,12 @@ async function sendAnswerToServer(answer, questionNumber, storyboardController) 
     } finally {}
 }
 
+async function makeFirstMirrorCall() {
+  let firstChat = `For the first respond, You must express your thoughts about user creating this
+  "room" for you(use  your tone, match your personality). End smoothly with a daily question"What did 
+  you have for breakfast?"]`;
+  chatWithMirrorSelf(firstChat);
+}
 
 /* 
  * In Mirror state, talk to gpt with configured prompt.
@@ -84,6 +92,7 @@ async function chatWithMirrorSelf(chat) {
               console.log("---- restart speech recognition ----");
               speechRecognition.start();
             }
+            // recordingLabel.style.display = "none";
             speechRecognition.stop();
             gptAudio.play();
         }
@@ -133,6 +142,7 @@ function speechRecognitionSetup(inputBox) {
             }
         }
     };
+
   } else {
     console.log("Speech Recognition Not Available");
   }

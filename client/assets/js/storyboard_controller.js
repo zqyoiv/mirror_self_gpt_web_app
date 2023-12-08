@@ -34,6 +34,9 @@ class StoryboardController {
                     this.mirrorStartTimer = millis();
                     console.log("mirrorStartTimer start: " + this.mirrorStartTimer);
                 }
+                if (this.state == LOADING_STATE) {
+                    makeFirstMirrorCall(); 
+                }
             }
 
             if (IS_DEBUG) {

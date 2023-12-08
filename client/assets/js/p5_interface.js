@@ -69,6 +69,7 @@ function setup() {
   inputBox.style("width", "600"); // 增加输入框的宽度
   inputBox.style("height", "100"); // 增加输入框的高度
   inputBox.style("font-size", "24px"); // 可选：增加字体大小以改善可读性
+
   // Bind input element with speech recognition result.
   speechRecognition = speechRecognitionSetup(inputBox.elt);
 
@@ -79,6 +80,10 @@ function setup() {
   
   speechRecognition.start();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  recordingLabel = document.getElementById("recording-label");
+}, false);
 
 function draw() {
     if (storyboardController.state == LOADING_STATE) {
@@ -148,6 +153,8 @@ function updateLoadingText() {
 }
 
 function handleMirrorStateSubmit() {
+    inputBox.hide();
+
     let answer = inputBox.value();
     mirrorSelfDisplayer.display();
     

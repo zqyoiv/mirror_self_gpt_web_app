@@ -15,6 +15,14 @@ select {
     text-overflow: ellipsis;
 }
 
+video#recording-label {
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    top: 75%;
+    left: 45%;
+}
+
 #question-container,
 #prompt-config-gpt-reponse-container {
     color: white;
