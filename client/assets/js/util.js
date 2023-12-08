@@ -1,4 +1,6 @@
 let IS_DEBUG = false;
+let gptAudio;
+let speechRecognition;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -77,8 +79,13 @@ async function chatWithMirrorSelf(chat) {
         const responseObject = await response.json();
         let mirrorText = responseObject["mirrorText"];
         if (responseObject["path"]) {
-            let audio = new Audio(responseObject["path"]);
-            audio.play();
+            gptAudio = new Audio(responseObject["path"]);
+            gptAudio.onended = function(event) {
+              console.log("---- restart speech recognition ----");
+              speechRecognition.start();
+            }
+            speechRecognition.stop();
+            gptAudio.play();
         }
         addResponse(false, `<div>Mirror response: \n${mirrorText}</div>`);
         return mirrorText;
@@ -102,7 +109,6 @@ function generateUniqueId() {
 // ========================================================
 
 function speechRecognitionSetup(inputBox) {
-  let speechRecognition;
   if ("webkitSpeechRecognition" in window) {
     // Speech Recognition Stuff goes here
     speechRecognition = new webkitSpeechRecognition();
@@ -127,11 +133,6 @@ function speechRecognitionSetup(inputBox) {
             }
         }
     };
-
-    speechRecognition.onend = function(event) {
-        speechRecognition.start();
-    };
-
   } else {
     console.log("Speech Recognition Not Available");
   }

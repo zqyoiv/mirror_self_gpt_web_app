@@ -1,6 +1,5 @@
 // original version: https://editor.p5js.org/qh2207/sketches/5SfuOIngg
 const serial = new p5.WebSerial();
-let speechRecognition;
 
 let distance = 0;
 let triggeredByDistanceSensor = false;
