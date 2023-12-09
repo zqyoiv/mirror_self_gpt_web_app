@@ -64,8 +64,15 @@ async function sendAnswerToServer(answer, questionNumber, storyboardController) 
 
 async function makeFirstMirrorCall() {
   let firstChat = `For the first respond, You must express your thoughts about user creating this
-  "room" for you(use  your tone, match your personality). End smoothly with a daily question"What did 
-  you have for breakfast?"]`;
+  "room" for you(use  your tone, match your personality). End smoothly with a daily question, 
+  e.g."Got any vacation plans coming up?"
+  "What'd you have for breakfast?"
+  "What did you get up to last weekend?"
+  "Reading anything interesting lately? Or what was the last book you read?"
+  "Caught any good movies or TV shows recently?"
+  "How do you like to chill out after a long day?"
+  "Anything cool or interesting happen to you this week?"
+  "How do you usually kick back on the weekends?"]`;
   chatWithMirrorSelf(firstChat);
 }
 
