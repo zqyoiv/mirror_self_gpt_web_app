@@ -186,7 +186,9 @@ app.post('/chat-with-config-prompt', async (req, res) => {
             let path = "";
             result = result.toLowerCase();
             if (result.split("mirror-self: ").length > 1) {
+                // Take out text between "mirror-self:"" and "#mirrorend"
                 mirrorText = result.split("mirror-self: ")[1];
+                mirrorText = mirrorText.split("#mirrorend")[0];
                 path = await sendTextToSpeech(mirrorText);
             } else {
                 mirrorText = result;
