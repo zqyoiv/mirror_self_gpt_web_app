@@ -159,7 +159,7 @@ function handleMirrorStateSubmit() {
     mirrorSelfDisplayer.display();
     
     // When type less than 3 words, show error message.
-    if (answer == "" || ((storyboardController.questionNumber != 5) 
+    if (answer == "" || ((storyboardController.questionNumber != 6) 
                         && (storyboardController.questionNumber != 0) 
                         && answer.split(" ") >= 3)) {
         fill("red");
@@ -184,7 +184,11 @@ function handleQuestionStateSubmit() {
     let answer = inputBox.value();
     let currentQuestionIndex = storyboardController.questionNumber;
     let lastQuestionIndex = currentQuestionIndex - 1;
-    inputBox.show();
+    if (IS_AUDIO_MODE) {
+      recordingLabel.style.display = "block";
+    } else {
+      inputBox.show();
+    }
 
     if (currentQuestionIndex == 0) {
         questionDisplayer.displayQuestion(storyboardController.questionNumber);
@@ -201,16 +205,16 @@ function handleQuestionStateSubmit() {
         sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
         inputBox.value("");
 
-        if (lastQuestionIndex == 5) {
+        if (lastQuestionIndex == 6) {
           if (answer.indexOf("es") != -1) {
             storyboardController.isQuestion6Yes = true;
-            storyboardController.questionNumber = 6;
+            storyboardController.questionNumber = 7;
             currentQuestionIndex = storyboardController.questionNumber;
             questionDisplayer.displayQuestion(currentQuestionIndex);
             inputBox.value("");
           } else {
             storyboardController.isQuestion6Yes = false;
-            storyboardController.questionNumber = 7;
+            storyboardController.questionNumber = 8;
             currentQuestionIndex = storyboardController.questionNumber;
             questionDisplayer.displayQuestion(currentQuestionIndex);
             inputBox.value("");
@@ -222,13 +226,13 @@ function handleQuestionStateSubmit() {
         }
 
         // Play audio.
-        if (lastQuestionIndex == 3) {
+        if (lastQuestionIndex == 4) {
           playDayNightMusicFromText(answer);
-        } else if (lastQuestionIndex == 4) {
+        } else if (lastQuestionIndex == 5) {
           playSeasonMusicFromText(answer);
         }
 
-        if (currentQuestionIndex == 9) {
+        if (currentQuestionIndex == 10) {
           storyboardController.nextState();
         } else {
           storyboardController.nextQuestion(); 

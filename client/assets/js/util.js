@@ -1,4 +1,5 @@
 let IS_DEBUG = false;
+let IS_AUDIO_MODE = true;
 let gptAudio;
 let speechRecognition;
 
@@ -97,9 +98,14 @@ async function chatWithMirrorSelf(chat) {
             gptAudio = new Audio(responseObject["path"]);
             gptAudio.onended = function(event) {
               console.log("---- restart speech recognition ----");
+              if (IS_AUDIO_MODE) {
+                recordingLabel.style.display = "block";
+              }
               speechRecognition.start();
             }
-            // recordingLabel.style.display = "none";
+            if (IS_AUDIO_MODE) {
+              recordingLabel.style.display = "none";
+            }
             speechRecognition.stop();
             gptAudio.play();
         }

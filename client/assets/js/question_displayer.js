@@ -7,15 +7,16 @@ class QuestionDisplayer {
         ];
 
         this.questionList = [
-            "Q1. Do you think your inside self is certain?",
-            "Q2. What kind of person are you in your everyday life?",
-            "Q3. If you were to describe yourself as a house, what would it be like?",
-            "Q4. What time is the house, day or night?",
-            "Q5. What season is the house in?",
-            "Q6. Is there another self that doesn't normally appear in your daily life?",
-            "Q7-1. What kind of person is he/she specifically?",
-            "Q7-2. What do you think it would be like to be the complete opposite of yourself?",
-            "Q8. If you had to open a room in such a house just for your other self, what kind of room would that be?",
+            "Q1. What's your pronoun?",
+            "Q2. Do you think your inside self is certain?",
+            "Q3. What kind of person are you in your everyday life?",
+            "Q4. If you were to describe yourself as a house, what would it be like?",
+            "Q5. What time is the house, day or night?",
+            "Q6. What season is the house in?",
+            "Q7. Is there another self that doesn't normally appear in your daily life?",
+            "Q8-1. What kind of person is he/she specifically?",
+            "Q8-2. What do you think it would be like to be the complete opposite of yourself?",
+            "Q9. If you had to open a room in such a house just for your other self, what kind of room would that be?",
         ];
     }
 

@@ -17,6 +17,7 @@ const openai = new OpenAI({
 });
 const model_name = "gpt-4-1106-preview";
 let response_counter = 0;
+let mirror_voice_name = "alloy";
 
 import { PromptProcessor} from './prompt_processor.mjs';
 import { get } from 'http';
@@ -127,6 +128,16 @@ app.post('/question-answer', async (req, res) => {
     }
 
     try {
+        // Set mirror gender.
+        if (questionNumber == 0) {
+            if (answer.indexOf("she") != -1 || answer.indexOf("her") != -1) {
+                mirror_voice_name = "nova";
+            } else if (answer.indexOf("he") != -1 || answer.indexOf("him") != -1) {
+                mirror_voice_name = "onyx";
+            } else {
+                mirror_voice_name = "alloy";
+            }
+        }
         // TODO: Send question number and answer to the prompt processor to configure GPT.
         let updateResult = await promptProcessor.updatePromptWithAnswer(questionNumber, answer);
         return res.send(updateResult);
@@ -236,7 +247,7 @@ async function sendTextToSpeech(text) {
     const speechFile = path.resolve(speechFilePath);
     const mp3 = await openai.audio.speech.create({
         model: "tts-1",
-        voice: "alloy",
+        voice: mirror_voice_name,
         input: text,
     });
     const buffer = Buffer.from(await mp3.arrayBuffer());

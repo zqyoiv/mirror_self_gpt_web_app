@@ -12,15 +12,16 @@ export class PromptProcessor {
     constructor() {
 
         this.questionList = [
-            "Q1. Do you think your inside self is certain?",
-            "Q2. What kind of person are you in your everyday life?",
-            "Q3. If you were to describe yourself as a house, what would it be like?",
-            "Q4. What time is the house, day, night, or noon?",
-            "Q5. What season is the house in?",
-            "Q6. Is there another side that doesn't normally appear in your daily life?",
-            "Q7-1. What kind of person is he/she specifically?",
-            "Q7-2. What do you think it would be like to be the complete opposite of yourself?",
-            "Q8. If you had to open a room in such a house just for your other self, what kind of room would that be?",
+            "Q1. What's your pronoun?",
+            "Q2. Do you think your inside self is certain?",
+            "Q3. What kind of person are you in your everyday life?",
+            "Q4. If you were to describe yourself as a house, what would it be like?",
+            "Q5. What time is the house, day, night, or noon?",
+            "Q6. What season is the house in?",
+            "Q7. Is there another side that doesn't normally appear in your daily life?",
+            "Q8-1. What kind of person is he/she specifically?",
+            "Q8-2. What do you think it would be like to be the complete opposite of yourself?",
+            "Q9. If you had to open a room in such a house just for your other self, what kind of room would that be?",
         ];
 
         this.answerList = [];
@@ -62,32 +63,32 @@ export class PromptProcessor {
 
         return new Promise((finalResolve) => {
             switch (questionIndex) {
-                case 1:
-                    configPrompt = this.q2ConfigPrompt1(this.answerList[1]);
+                case 2:
+                    configPrompt = this.q2ConfigPrompt1(this.answerList[2]);
                     configKeyIndex = 2;
                     try {
                         this.sendConfigPromptToGPT(configKeyIndex, configPrompt, finalResolve);
                     } catch (error) { }
 
-                    configPrompt = this.q2ConfigPrompt2(this.answerList[1]);
+                    configPrompt = this.q2ConfigPrompt2(this.answerList[2]);
                     configKeyIndex = 3;
                     try {
                         this.sendConfigPromptToGPT(configKeyIndex, configPrompt, finalResolve);
                     } catch (error) { }
 
                     break;
-                case 4:
-                    configPrompt = this.q345ConfigPrompt(this.answerList[2],
-                                                         this.answerList[3], 
-                                                         this.answerList[4]);
+                case 5:
+                    configPrompt = this.q345ConfigPrompt(this.answerList[3],
+                                                         this.answerList[4], 
+                                                         this.answerList[5]);
                     configKeyIndex = 1;
                     try {
                         this.sendConfigPromptToGPT(configKeyIndex, configPrompt, finalResolve);
                     } catch (error) { }
 
                     break;
-                case 6:
                 case 7:
+                case 8:
                     let answer67 = userAnswer;
                     configPrompt = this.q67ConfigPrompt1(answer67);
                     configKeyIndex = 5;
@@ -109,8 +110,8 @@ export class PromptProcessor {
 
 
                     break;
-                case 8:
-                    configPrompt = this.q8ConfigPrompt(this.answerList[8]);
+                case 9:
+                    configPrompt = this.q8ConfigPrompt(this.answerList[9]);
                     configKeyIndex = 0;
                     try {
                         this.sendConfigPromptToGPT(configKeyIndex, configPrompt, finalResolve);
