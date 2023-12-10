@@ -113,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function draw() {
     if (storyboardController.state == LOADING_STATE) {
+        $("video#recording-label")[0].style.display = "none";
+        $("img#next-button")[0].style.display = "none";
         background(255);
         fill(0);
         textSize(24);
@@ -126,8 +128,12 @@ function draw() {
         inputBox.hide();
         updateLoadingText();
     } else if (storyboardController.state == MIRROR_STATE) {
+        $("video#recording-label")[0].style.display = "block";
+        $("img#next-button")[0].style.display = "none";
         mirrorSelfDisplayer.display();
-        inputBox.show();
+        if (!IS_AUDIO_MODE) {
+          inputBox.show();
+        }
         let countDownTimer = storyboardController.mirrorCountDowntext();
         fill('red');
         text(countDownTimer, 30, 50);

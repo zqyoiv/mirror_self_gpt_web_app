@@ -99,6 +99,11 @@ async function chatWithMirrorSelf(chat) {
             speechRecognition.stop();
             gptAudio.play();
         }
+        if (storyboardController.state == LOADING_STATE) {
+          serial.write("All Set");
+          console.log("--------------------- All set sent ----------------------");
+          storyboardController.nextState();
+        }
         addResponse(false, `<div>Mirror response: \n${mirrorText}</div>`);
         return mirrorText;
     } catch (err) {
@@ -353,11 +358,6 @@ function updateLoadingText() {
   let loadingEllipses = Math.floor((currentTime - loadingStartTime) / 500) % 7;
   textSize(100);
   loadingText = ".".repeat(loadingEllipses);
-  if (currentTime - loadingStartTime > loadingDuration) {
-    serial.write("All Set");
-    console.log("--------------------- All set sent ----------------------");
-    storyboardController.nextState();
-  }
 }
 
 function handleMirrorStateSubmit() {
