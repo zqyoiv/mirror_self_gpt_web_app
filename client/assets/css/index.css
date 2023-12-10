@@ -15,12 +15,20 @@ select {
     text-overflow: ellipsis;
 }
 
-video#recording-label {
+img#next-button {
     position: fixed;
-    width: 200px;
-    height: 200px;
+    width: 100px;
+    height: 100px;
     top: 75%;
     left: 45%;
+}
+
+video#recording-label {
+    position: fixed;
+    width: 150px;
+    height: 150px;
+    top: 70%;
+    left: 40%;
 }
 
 #question-container,

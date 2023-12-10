@@ -38,7 +38,7 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  background(0);
+  background(255);
   textFont("Courier New");
 
   // check to see if serial is available:
@@ -78,17 +78,43 @@ function setup() {
   inputBox.hide();
   storyboardController.nextInstruction();
   
-  speechRecognition.start();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  recordingLabel = document.getElementById("recording-label");
+  // Audio record button
+  $("video#recording-label")[0].style.display = "none";
+  $("video#recording-label").on("mousedown", function() {
+    $("video#recording-label")[0].play();
+    speechRecognition.start();
+  });
+
+  let allowMouseUp = true;
+  $("video#recording-label").on("mouseup", function() {
+    if (allowMouseUp) {
+      // Prevent calling mouseup multiple times.
+      allowMouseUp = false;
+
+      $("video#recording-label")[0].pause();
+      $("video#recording-label")[0].currentTime = 0;
+      speechRecognition.stop();
+      // pushButtonNextStepHandler() is called in speechRecognition.onresuklt().
+
+      setTimeout(() => {
+        allowMouseUp = true;
+      }, 300); // 300 milliseconds
+    }
+  });
+
+  // Next button
+  $("img#next-button").on("mousedown", function() {
+    pushButtonNextStepHandler();
+  });
 }, false);
 
 function draw() {
     if (storyboardController.state == LOADING_STATE) {
-        background(0);
-        fill(255);
+        background(255);
+        fill(0);
         textSize(24);
         text(
             loadingText,
@@ -106,6 +132,7 @@ function draw() {
         fill('red');
         text(countDownTimer, 30, 50);
     } else if (storyboardController.state == END_STATE) {
+      removeAllSpeechFiles();
       location.reload();
     }
 }
@@ -127,124 +154,8 @@ function serialEvent() {
     }
 }
 
-function pushButtonNextStepHandler() {
-  background(0);
-    if (storyboardController.state == INSTRUCTION_STATE) {
-        questionDisplayer.displayInstruction(storyboardController.instructionNumber);
-        inputBox.hide();
-        storyboardController.nextInstruction();
-    } else if (storyboardController.state == QUESTION_STATE) {
-      handleQuestionStateSubmit();
-    } else if (storyboardController.state == MIRROR_STATE) {
-      handleMirrorStateSubmit();
-    }
-}
-
-function updateLoadingText() {
-  let currentTime = millis();
-  let loadingEllipses = Math.floor((currentTime - loadingStartTime) / 500) % 7;
-  textSize(100);
-  loadingText = ".".repeat(loadingEllipses);
-  if (currentTime - loadingStartTime > loadingDuration) {
-    serial.write("All Set");
-    console.log("--------------------- All set sent ----------------------");
-    storyboardController.nextState();
-  }
-}
-
-function handleMirrorStateSubmit() {
-    inputBox.hide();
-
-    let answer = inputBox.value();
-    mirrorSelfDisplayer.display();
-    
-    // When type less than 3 words, show error message.
-    if (answer == "" || ((storyboardController.questionNumber != 6) 
-                        && (storyboardController.questionNumber != 0) 
-                        && answer.split(" ") >= 3)) {
-        fill("red");
-        text("Mind sharing a bit more?", 30, 50);
-    } else {
-        chatWithMirrorSelf(answer, (response) => {
-            redrawBackgroundAndSetTextConfig();
-            text(responseText,
-            30,
-            windowHeight / 2 - 50,
-            windowWidth - 40,
-            windowHeight / 2 - 50);
-        });
-        inputBox.value("");
-    }
-}
-
-// 1. Send the user answer to the current question to server.
-// 2. Display next question.
-
-function handleQuestionStateSubmit() {
-    let answer = inputBox.value();
-    let currentQuestionIndex = storyboardController.questionNumber;
-    let lastQuestionIndex = currentQuestionIndex - 1;
-    if (IS_AUDIO_MODE) {
-      recordingLabel.style.display = "block";
-    } else {
-      inputBox.show();
-    }
-
-    if (currentQuestionIndex == 0) {
-        questionDisplayer.displayQuestion(storyboardController.questionNumber);
-        storyboardController.nextQuestion();
-        inputBox.value("");
-    } else if (currentQuestionIndex > 0) {
-      if (answer == "") {
-        // Block user from submitting empty answer.
-        questionDisplayer.displayQuestion(lastQuestionIndex);
-        fill("red");
-        text("Please say something.", 30, 50);
-      } else {
-        // Send last question's answer to GPT
-        sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
-        inputBox.value("");
-
-        if (lastQuestionIndex == 6) {
-          if (answer.indexOf("es") != -1) {
-            storyboardController.isQuestion6Yes = true;
-            storyboardController.questionNumber = 7;
-            currentQuestionIndex = storyboardController.questionNumber;
-            questionDisplayer.displayQuestion(currentQuestionIndex);
-            inputBox.value("");
-          } else {
-            storyboardController.isQuestion6Yes = false;
-            storyboardController.questionNumber = 8;
-            currentQuestionIndex = storyboardController.questionNumber;
-            questionDisplayer.displayQuestion(currentQuestionIndex);
-            inputBox.value("");
-            console.log("---- updates isQuestion6Yes: false");
-          }
-        } else {
-          questionDisplayer.displayQuestion(currentQuestionIndex);
-          inputBox.value("");
-        }
-
-        // Play audio.
-        if (lastQuestionIndex == 4) {
-          playDayNightMusicFromText(answer);
-        } else if (lastQuestionIndex == 5) {
-          playSeasonMusicFromText(answer);
-        }
-
-        if (currentQuestionIndex == 10) {
-          storyboardController.nextState();
-        } else {
-          storyboardController.nextQuestion(); 
-        }
-        
-        loadingStartTime = millis();
-      }
-  }               
-}
-
 function redrawBackgroundAndSetTextConfig() {
-  background(0);
-  fill(255);
+  background(255);
+  fill(0);
   textSize(42);
 }

@@ -3,7 +3,7 @@ let IS_AUDIO_MODE = true;
 let gptAudio;
 let speechRecognition;
 
-let recordingLabel;
+let recordingButton;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -96,16 +96,6 @@ async function chatWithMirrorSelf(chat) {
         let mirrorText = responseObject["mirrorText"];
         if (responseObject["path"]) {
             gptAudio = new Audio(responseObject["path"]);
-            gptAudio.onended = function(event) {
-              console.log("---- restart speech recognition ----");
-              if (IS_AUDIO_MODE) {
-                recordingLabel.style.display = "block";
-              }
-              speechRecognition.start();
-            }
-            if (IS_AUDIO_MODE) {
-              recordingLabel.style.display = "none";
-            }
             speechRecognition.stop();
             gptAudio.play();
         }
@@ -148,6 +138,9 @@ function speechRecognitionSetup(inputBox) {
                 inputBox.value = inputBox.value + " " + transcript;
                 inputBox.textContent = inputBox.value;
                 console.log('Final result: ' + transcript);
+                
+                // Go to next step when speech recognition is finished.
+                pushButtonNextStepHandler();
             } else {
                 // Interim result
                 var interimTranscript = event.results[i][0].transcript;
@@ -160,6 +153,33 @@ function speechRecognitionSetup(inputBox) {
     console.log("Speech Recognition Not Available");
   }
   return speechRecognition;
+}
+
+function removeAllSpeechFiles() {
+  const fs = require('fs');
+  const path = require('path');
+
+  const directoryPath = 'path/to/your/directory';
+
+  fs.readdir(directoryPath, (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      return;
+    }
+
+    files.forEach(file => {
+      if (file.includes('speech')) {
+        const filePath = path.join(directoryPath, file);
+        fs.unlink(filePath, err => {
+          if (err) {
+            console.error('Error deleting file:', err);
+          } else {
+            console.log(`Deleted file: ${filePath}`);
+          }
+        });
+      }
+    });
+  });
 }
 
 // ========================================================
@@ -307,4 +327,128 @@ function playDayNightMusicFromText(text) {
       dayAudioFiles[1].play();
       break;
   }
+}
+
+
+// ========================================================
+//      UI Control
+// ========================================================
+
+function pushButtonNextStepHandler() {
+  background(255);
+  $("video#recording-label")[0].style.display = "none";
+  if (storyboardController.state == INSTRUCTION_STATE) {
+      questionDisplayer.displayInstruction(storyboardController.instructionNumber);
+      inputBox.hide();
+      storyboardController.nextInstruction();
+  } else if (storyboardController.state == QUESTION_STATE) {
+    handleQuestionStateSubmit();
+  } else if (storyboardController.state == MIRROR_STATE) {
+    handleMirrorStateSubmit();
+  }
+}
+
+function updateLoadingText() {
+  let currentTime = millis();
+  let loadingEllipses = Math.floor((currentTime - loadingStartTime) / 500) % 7;
+  textSize(100);
+  loadingText = ".".repeat(loadingEllipses);
+  if (currentTime - loadingStartTime > loadingDuration) {
+    serial.write("All Set");
+    console.log("--------------------- All set sent ----------------------");
+    storyboardController.nextState();
+  }
+}
+
+function handleMirrorStateSubmit() {
+    inputBox.hide();
+
+    let answer = inputBox.value();
+    mirrorSelfDisplayer.display();
+    
+    // When type less than 3 words, show error message.
+    if (answer == "" || ((storyboardController.questionNumber != 6) 
+                        && (storyboardController.questionNumber != 0) 
+                        && answer.split(" ") >= 3)) {
+        fill("red");
+        text("Mind sharing a bit more?", 30, 50);
+    } else {
+        chatWithMirrorSelf(answer, (response) => {
+            redrawBackgroundAndSetTextConfig();
+            text(responseText,
+            30,
+            windowHeight / 2 - 50,
+            windowWidth - 40,
+            windowHeight / 2 - 50);
+        });
+        inputBox.value("");
+    }
+}
+
+// 1. Send the user answer to the current question to server.
+// 2. Display next question.
+
+function handleQuestionStateSubmit() {
+    let answer = inputBox.value();
+    let currentQuestionIndex = storyboardController.questionNumber;
+    let lastQuestionIndex = currentQuestionIndex - 1;
+    if (IS_AUDIO_MODE) {
+      $("video#recording-label")[0].style.display = "block";
+    } else {
+      inputBox.show();
+    }
+
+    if (currentQuestionIndex == 0) {
+        questionDisplayer.displayQuestion(storyboardController.questionNumber);
+        storyboardController.nextQuestion();
+        inputBox.value("");
+    } else if (currentQuestionIndex > 0) {
+      if (answer == "") {
+          // Block user from submitting empty answer.
+          questionDisplayer.displayQuestion(lastQuestionIndex);
+          if (currentQuestionIndex > 1) {
+            fill("red");
+            text("Please say something.", 30, 50);
+          }
+      } else {
+        // Send last question's answer to GPT
+        sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
+        inputBox.value("");
+
+        if (lastQuestionIndex == 6) {
+          if (answer.indexOf("es") != -1) {
+            storyboardController.isQuestion6Yes = true;
+            storyboardController.questionNumber = 7;
+            currentQuestionIndex = storyboardController.questionNumber;
+            questionDisplayer.displayQuestion(currentQuestionIndex);
+            inputBox.value("");
+          } else {
+            storyboardController.isQuestion6Yes = false;
+            storyboardController.questionNumber = 8;
+            currentQuestionIndex = storyboardController.questionNumber;
+            questionDisplayer.displayQuestion(currentQuestionIndex);
+            inputBox.value("");
+            console.log("---- updates isQuestion6Yes: false");
+          }
+        } else {
+          questionDisplayer.displayQuestion(currentQuestionIndex);
+          inputBox.value("");
+        }
+
+        // Play audio.
+        if (lastQuestionIndex == 4) {
+          playDayNightMusicFromText(answer);
+        } else if (lastQuestionIndex == 5) {
+          playSeasonMusicFromText(answer);
+        }
+
+        if (currentQuestionIndex == 10) {
+          storyboardController.nextState();
+        } else {
+          storyboardController.nextQuestion(); 
+        }
+        
+        loadingStartTime = millis();
+      }
+  }               
 }
