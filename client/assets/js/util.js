@@ -406,10 +406,8 @@ function handleQuestionStateSubmit() {
       if (answer == "") {
           // Block user from submitting empty answer.
           questionDisplayer.displayQuestion(lastQuestionIndex);
-          if (currentQuestionIndex > 1) {
-            fill("red");
-            text("Please say something.", 30, 50);
-          }
+          fill("red");
+          text("Please say something.", 30, 50);
       } else {
         // Send last question's answer to GPT
         sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
