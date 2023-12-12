@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Audio record button
   $("video#recording-label")[0].style.display = "none";
   $("video#recording-label").on("mousedown", function() {
+    isRecordButtonPressed = true;
     $("video#recording-label")[0].play();
     speechRecognition.start();
   });
@@ -91,13 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let allowMouseUp = true;
   $("video#recording-label").on("mouseup", function() {
     if (allowMouseUp) {
+      isRecordButtonPressed = false;
       // Prevent calling mouseup multiple times.
       allowMouseUp = false;
 
       $("video#recording-label")[0].pause();
       $("video#recording-label")[0].currentTime = 0;
       speechRecognition.stop();
-      // pushButtonNextStepHandler() is called in speechRecognition.onresuklt().
+      // pushButtonNextStepHandler() is called in speechRecognition.onresult().
 
       setTimeout(() => {
         allowMouseUp = true;

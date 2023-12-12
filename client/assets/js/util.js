@@ -4,6 +4,7 @@ let gptAudio;
 let speechRecognition;
 
 let recordingButton;
+let isRecordButtonPressed = false;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -143,9 +144,10 @@ function speechRecognitionSetup(inputBox) {
                 inputBox.value = inputBox.value + " " + transcript;
                 inputBox.textContent = inputBox.value;
                 console.log('Final result: ' + transcript);
-                
-                // Go to next step when speech recognition is finished.
-                pushButtonNextStepHandler();
+                // isRecordButtonPressed is set in record button action handler
+                if (!isRecordButtonPressed) {
+                  pushButtonNextStepHandler();
+                }
             } else {
                 // Interim result
                 var interimTranscript = event.results[i][0].transcript;
