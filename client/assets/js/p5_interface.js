@@ -37,9 +37,13 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  let canvasWidth = windowWidth;
+  let canvasHeight = (canvasWidth / 4) * 3;
+  createCanvas(canvasWidth, canvasHeight);
   background(255);
-  textFont("Courier New");
+  // textFont("Courier New")
+  textFont("Open Sans");
+  textStyle(BOLD);
 
   // check to see if serial is available:
   if (!navigator.serial) {
@@ -119,7 +123,7 @@ function draw() {
         $("img#next-button")[0].style.display = "none";
         background(255);
         fill(0);
-        textSize(24);
+        // textSize(32);
         text(
             loadingText,
             30,
@@ -160,10 +164,4 @@ function serialEvent() {
         pushButtonNextStepHandler();
       }
     }
-}
-
-function redrawBackgroundAndSetTextConfig() {
-  background(255);
-  fill(0);
-  textSize(42);
 }

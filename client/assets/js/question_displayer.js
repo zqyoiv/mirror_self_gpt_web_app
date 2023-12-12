@@ -33,11 +33,12 @@ class QuestionDisplayer {
             if (!IS_DEBUG) {
                 // p5 interface version
                 redrawBackgroundAndSetTextConfig();
+                textSize(60);
                 text(
                     this.instructionList[instructionNumber],
                     30,
-                    windowHeight / 2 - 50,
-                    windowWidth - 40,
+                    windowHeight / 2 - 150,
+                    windowWidth - 60,
                     windowHeight / 2 - 50
                 );
             }
@@ -61,8 +62,8 @@ class QuestionDisplayer {
                 text(
                     this.questionList[questionNumber],
                     30,
-                    windowHeight / 2 - 50,
-                    windowWidth - 40,
+                    windowHeight / 2 - 100,
+                    windowWidth - 60,
                     windowHeight / 2 - 50
                 );
             }

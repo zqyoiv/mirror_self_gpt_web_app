@@ -452,3 +452,12 @@ function handleQuestionStateSubmit() {
       }
   }               
 }
+
+// ========================================================
+//      p5 drawing
+// ========================================================
+
+function redrawBackgroundAndSetTextConfig() {
+  background(255);
+  fill(60);
+}
