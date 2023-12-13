@@ -42,9 +42,7 @@ function setup() {
   let canvasHeight = (canvasWidth / 4) * 3;
   createCanvas(canvasWidth, canvasHeight);
   background(255);
-  // textFont("Courier New")
-  textFont("Open Sans");
-  textStyle(BOLD);
+  textStyle(NORMAL);
 
   // check to see if serial is available:
   if (!navigator.serial) {
