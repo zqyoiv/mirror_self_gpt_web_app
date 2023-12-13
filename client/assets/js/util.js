@@ -110,7 +110,10 @@ async function chatWithMirrorSelf(chat) {
             speechRecognition.stop();
             gptAudio.play();
         }
+        // switch from loading state to mirror state.
         if (storyboardController.state == LOADING_STATE) {
+          // stop recording video and play in loading scene.
+          sendStopAndPlayRequest();
           serial.write("All Set");
           console.log("--------------------- All set sent ----------------------");
           storyboardController.nextState();
@@ -480,8 +483,6 @@ function handleQuestionStateSubmit() {
 
         if (currentQuestionIndex == 10) {
           storyboardController.nextState();
-          // stop recording video and play in loading scene.
-          sendStopAndPlayRequest();
         } else {
           storyboardController.nextQuestion(); 
         }
