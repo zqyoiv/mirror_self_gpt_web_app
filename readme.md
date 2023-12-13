@@ -13,20 +13,17 @@ npm install
 ```
 3. Create a .env file in the root folder and add your OpenAI API key in the following format:
 ```sh
-OPENAI_API_KEY=your_api_key
+exportOPENAI_API_KEY=your_api_key
 ```
+If doesn't work, manually update OPEN_API_KEY in index.mjs and prompt_processor.mjs.
 4. Start node server
 ```sh
-node index.js
+node index.mjs
 ```
 5. Now when you navigate to http://localhost:3001 you will see web response.
-
-### Installation (Windows)
-Open the whole folder in Visual Studio Code (not Visual Studio).
-1. Open View > Terminal
-2. Install dependencies
+6. To see portrait visual: open following app in a seperate window.
 ```sh
-npm install
+https://mirror-portrait-05692208a0fa.herokuapp.com/
 ```
 3. Run node.js
 ```sh
