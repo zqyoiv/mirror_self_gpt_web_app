@@ -25,8 +25,4 @@ node index.mjs
 ```sh
 https://mirror-portrait-05692208a0fa.herokuapp.com/
 ```
-3. Run node.js
-```sh
-node index.js
-```
 
