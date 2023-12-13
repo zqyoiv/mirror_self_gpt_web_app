@@ -31,6 +31,7 @@ let userInputs = []; // 存储用户输入的内容
 let mirrorSelfDisplayer = new MirrorSelfDisplayer();
 let questionDisplayer = new QuestionDisplayer();
 let storyboardController = new StoryboardController();
+let wordCircle = new WordCircle();
 
 function preload() {
   preloadAudio();
@@ -78,22 +79,38 @@ function setup() {
   speechRecognition = speechRecognitionSetup(inputBox.elt);
 
   storyboardController.state = INSTRUCTION_STATE;
+  // storyboardController.state = MIRROR_STATE;
+  wordCircle.setup("This is a paragraph that will be displayed in a circle. Each character will disappear one by one over a period of 3 minutes.");
+
   questionDisplayer.displayInstruction(storyboardController.instructionNumber);
   inputBox.hide();
   storyboardController.nextInstruction();
-  
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   // Audio record button
   $("video#recording-label")[0].style.display = "none";
+  $("video#recording-label-black")[0].style.display = "none";
+
   $("video#recording-label").on("mousedown", function() {
     isRecordButtonPressed = true;
     $("video#recording-label")[0].play();
-    speechRecognition.start();
+
+    if (!isRecognitionStarted) {
+      speechRecognition.start();
+    }
+  });
+  $("video#recording-label-black").on("mousedown", function() {
+    isRecordButtonPressed = true;
+    $("video#recording-label-black")[0].play();
+
+    if (!isRecognitionStarted) {
+      speechRecognition.start();
+    }
   });
 
   let allowMouseUp = true;
+  let allowMouseUpBlack = true;
   $("video#recording-label").on("mouseup", function() {
     if (allowMouseUp) {
       isRecordButtonPressed = false;
@@ -110,6 +127,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 300); // 300 milliseconds
     }
   });
+  $("video#recording-label-black").on("mouseup", function() {
+    if (allowMouseUpBlack) {
+      isRecordButtonPressed = false;
+      // Prevent calling mouseup multiple times.
+      allowMouseUpBlack = false;
+
+      $("video#recording-label-black")[0].pause();
+      $("video#recording-label-black")[0].currentTime = 0;
+      speechRecognition.stop();
+      // pushButtonNextStepHandler() is called in speechRecognition.onresult().
+
+      setTimeout(() => {
+        allowMouseUpBlack = true;
+      }, 300); // 300 milliseconds
+    }
+  });
 
   // Next button
   $("img#next-button").on("mousedown", function() {
@@ -123,7 +156,6 @@ function draw() {
         $("img#next-button")[0].style.display = "none";
         background(255);
         fill(0);
-        // textSize(32);
         text(
             loadingText,
             30,
@@ -134,15 +166,21 @@ function draw() {
         inputBox.hide();
         updateLoadingText();
     } else if (storyboardController.state == MIRROR_STATE) {
-        $("video#recording-label")[0].style.display = "block";
-        $("img#next-button")[0].style.display = "none";
-        mirrorSelfDisplayer.display();
+        wordCircle.draw();
+
+        $("video#recording-label")[0].display = "none";
+        $("video#recording-label-black")[0].display = "block";
+
+        // $("img#next-button")[0].style.display = "none";
+        // mirrorSelfDisplayer.display();
+
         if (!IS_AUDIO_MODE) {
           inputBox.show();
         }
-        let countDownTimer = storyboardController.mirrorCountDowntext();
-        fill('red');
-        text(countDownTimer, 30, 50);
+
+        // let countDownTimer = storyboardController.mirrorCountDowntext();
+        // fill('red');
+        // text(countDownTimer, 30, 50);
     } else if (storyboardController.state == END_STATE) {
       removeAllSpeechFiles();
       location.reload();

@@ -23,6 +23,7 @@ img#next-button {
     left: 45%;
 }
 
+video#recording-label-black,
 video#recording-label {
     position: fixed;
     width: 150px;

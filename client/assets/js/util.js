@@ -5,6 +5,9 @@ let speechRecognition;
 
 let recordingButton;
 let isRecordButtonPressed = false;
+let isRecognitionStarted = false;
+
+let video_server_ip = "localhost";
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -51,11 +54,18 @@ async function sendAnswerToServer(answer, questionNumber, storyboardController) 
             storyboardController.isQuestion6Yes = false;
           }
         }
+
         if (!response.ok) {
             setErrorForResponse(responseElement, `HTTP Error: ${await response.text()}`);
             return;
         }
         const responseText = await response.text();
+
+        // Set mirror state word circle parameters as response for question 4.
+        if (questionNumber == 4) {
+          wordCircle.setup(responseText);
+        }
+
         return responseText;
     } catch (err) {
         const errorMsg = error.response ? error.response.data.error : `${error}`;
@@ -123,6 +133,28 @@ function generateUniqueId() {
 }
 
 // ========================================================
+//     Video call utilities.
+// ========================================================
+
+// Start recording video when the first next button is pressed.
+function sendStartRecordRequest() {
+  console.log("Start recording video called.");
+  fetch('http://' + video_server_ip + ':3000/start_record')
+    .then(response => response.text())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+}
+
+// Stop and play the video in loading stage.
+function sendStopAndPlayRequest() {
+  console.log("Stop and play video called.");
+  fetch('http://' + video_server_ip + ':3000/stop_and_play')
+    .then(response => response.text())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+}
+
+// ========================================================
 //     Speech recognition.
 // ========================================================
 
@@ -135,6 +167,14 @@ function speechRecognitionSetup(inputBox) {
     // Whether to return interim results (results that are not yet final)
     speechRecognition.interimResults = true;
 
+    speechRecognition.onstart = function() {
+      isRecognitionStarted = true;
+    };
+
+    speechRecognition.onend = function() {
+      isRecognitionStarted = false;
+    };
+
     // Define the event handler for the result event
     speechRecognition.onresult = function(event) {
         for (var i = event.resultIndex; i < event.results.length; ++i) {
@@ -145,9 +185,7 @@ function speechRecognitionSetup(inputBox) {
                 inputBox.textContent = inputBox.value;
                 console.log('Final result: ' + transcript);
                 // isRecordButtonPressed is set in record button action handler
-                if (!isRecordButtonPressed) {
-                  pushButtonNextStepHandler();
-                }
+                pushButtonNextStepHandler();
             } else {
                 // Interim result
                 var interimTranscript = event.results[i][0].transcript;
@@ -345,6 +383,10 @@ function pushButtonNextStepHandler() {
   background(255);
   $("video#recording-label")[0].style.display = "none";
   if (storyboardController.state == INSTRUCTION_STATE) {
+      if (storyboardController.instructionNumber == 1) {
+        // first time click next button, start recording video.
+        sendStartRecordRequest();
+      }
       questionDisplayer.displayInstruction(storyboardController.instructionNumber);
       inputBox.hide();
       storyboardController.nextInstruction();
@@ -444,6 +486,8 @@ function handleQuestionStateSubmit() {
 
         if (currentQuestionIndex == 10) {
           storyboardController.nextState();
+          // stop recording video and play in loading scene.
+          sendStopAndPlayRequest();
         } else {
           storyboardController.nextQuestion(); 
         }
