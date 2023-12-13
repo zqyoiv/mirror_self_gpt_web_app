@@ -14,6 +14,9 @@ class WordCircle {
         textFont('Georgia'); 
         this.characters = this.paragraph.split('');
         this.disappearInterval = this.totalDuration / this.characters.length;
+    }
+
+    startTimer() {
         this.startTime = millis();
     }
 
@@ -23,7 +26,7 @@ class WordCircle {
         let angleStep = TWO_PI / this.characters.length;
 
         push();
-        translate(width / 2, height / 2);
+        translate(width / 2, height*2/5);
 
         for (let i = 0; i < this.characters.length; i++) {
             if (millis() > this.startTime + i * this.disappearInterval) {
@@ -40,7 +43,6 @@ class WordCircle {
             fill(255);
             textSize(14);
             textStyle(NORMAL);
-            text
             text(this.characters[i], 0, 0);
             pop();
         }

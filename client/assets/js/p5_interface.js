@@ -159,17 +159,17 @@ function draw() {
         text(
             loadingText,
             30,
-            windowHeight / 2 - 50,
+            windowHeight / 2 - 180,
             windowWidth - 40,
-            windowHeight / 2 - 50
+            windowHeight / 2 - 150
         );
         inputBox.hide();
         updateLoadingText();
     } else if (storyboardController.state == MIRROR_STATE) {
         wordCircle.draw();
 
-        $("video#recording-label")[0].display = "none";
-        $("video#recording-label-black")[0].display = "block";
+        $("video#recording-label")[0].style.display = "none";
+        $("video#recording-label-black")[0].style.display = "block";
 
         // $("img#next-button")[0].style.display = "none";
         // mirrorSelfDisplayer.display();
@@ -185,6 +185,13 @@ function draw() {
       removeAllSpeechFiles();
       location.reload();
     }
+}
+
+function updateLoadingText() {
+  let currentTime = millis();
+  let loadingEllipses = Math.floor((currentTime - loadingStartTime) / 500) % 7;
+  textSize(100);
+  loadingText = ".".repeat(loadingEllipses);
 }
 
 // Debug workflow, simulate button pushing.

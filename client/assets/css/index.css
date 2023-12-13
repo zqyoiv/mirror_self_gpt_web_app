@@ -16,20 +16,22 @@ select {
 }
 
 img#next-button {
-    position: fixed;
     width: 100px;
     height: 100px;
     top: 75%;
-    left: 45%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 video#recording-label-black,
 video#recording-label {
-    position: fixed;
     width: 150px;
     height: 150px;
     top: 70%;
-    left: 40%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #question-container,

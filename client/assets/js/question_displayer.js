@@ -1,3 +1,5 @@
+const QUESTION_FONT_SIZE = 48;
+
 class QuestionDisplayer {
     constructor () {
         this.instructionList = [
@@ -33,11 +35,11 @@ class QuestionDisplayer {
             if (!IS_DEBUG) {
                 // p5 interface version
                 redrawBackgroundAndSetTextConfig();
-                textSize(60);
+                textSize(QUESTION_FONT_SIZE);
                 text(
                     this.instructionList[instructionNumber],
                     30,
-                    windowHeight / 2 - 150,
+                    windowHeight / 2 - 180,
                     windowWidth - 60,
                     windowHeight / 2 - 50
                 );
@@ -59,12 +61,13 @@ class QuestionDisplayer {
             if (!IS_DEBUG) {
                 // p5 interface version
                 redrawBackgroundAndSetTextConfig();
+                textSize(QUESTION_FONT_SIZE);
                 text(
                     this.questionList[questionNumber],
                     30,
-                    windowHeight / 2 - 100,
+                    windowHeight / 2 - 180,
                     windowWidth - 60,
-                    windowHeight / 2 - 50
+                    windowHeight / 2 - 100
                 );
             }
         }

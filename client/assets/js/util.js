@@ -114,6 +114,7 @@ async function chatWithMirrorSelf(chat) {
           serial.write("All Set");
           console.log("--------------------- All set sent ----------------------");
           storyboardController.nextState();
+          wordCircle.startTimer();
         }
         addResponse(false, `<div>Mirror response: \n${mirrorText}</div>`);
         return mirrorText;
@@ -395,13 +396,6 @@ function pushButtonNextStepHandler() {
   } else if (storyboardController.state == MIRROR_STATE) {
     handleMirrorStateSubmit();
   }
-}
-
-function updateLoadingText() {
-  let currentTime = millis();
-  let loadingEllipses = Math.floor((currentTime - loadingStartTime) / 500) % 7;
-  textSize(100);
-  loadingText = ".".repeat(loadingEllipses);
 }
 
 function handleMirrorStateSubmit() {
