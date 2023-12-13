@@ -7,7 +7,7 @@ let recordingButton;
 let isRecordButtonPressed = false;
 let isRecognitionStarted = false;
 
-let video_server_ip = "localhost";
+let video_server_ip = "https://mirror-portrait-05692208a0fa.herokuapp.com/";
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -139,7 +139,7 @@ function generateUniqueId() {
 // Start recording video when the first next button is pressed.
 function sendStartRecordRequest() {
   console.log("Start recording video called.");
-  fetch('http://' + video_server_ip + ':3000/start_record')
+  fetch(video_server_ip + 'start_record')
     .then(response => response.text())
     .then(data => console.log(data))
     .catch(error => console.error('Error:', error));
@@ -148,7 +148,7 @@ function sendStartRecordRequest() {
 // Stop and play the video in loading stage.
 function sendStopAndPlayRequest() {
   console.log("Stop and play video called.");
-  fetch('http://' + video_server_ip + ':3000/stop_and_play')
+  fetch(video_server_ip + 'stop_and_play')
     .then(response => response.text())
     .then(data => console.log(data))
     .catch(error => console.error('Error:', error));
