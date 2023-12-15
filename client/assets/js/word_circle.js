@@ -24,6 +24,7 @@ class WordCircle {
             .then(() => {
                 removeAllSpeechFiles();
                 window.location.reload();
+                serial.write("Reset");
             });
     }
 
