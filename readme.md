@@ -25,4 +25,14 @@ node index.mjs
 ```sh
 https://mirror-portrait-05692208a0fa.herokuapp.com/
 ```
-
+### Debug
+1. go to client/assets/js/constant.js
+change line 7 to:
+```sh
+let IS_DEBUG = true;
+```
+2. Start server like step 4 above, in browser, go to:
+```sh
+http://localhost:3001/debug.html
+```
+In debug mode you can see all GPT responses in text.
