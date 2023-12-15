@@ -241,7 +241,7 @@ app.post('/text-to-speech', async (req, res) => {
 });
 
 /* Clean up all speach files. */
-app.post('/cleanup', async (req, res) => {
+app.get('/cleanup', async (req, res) => {
     try {
         const directoryPath = "./client/";
 

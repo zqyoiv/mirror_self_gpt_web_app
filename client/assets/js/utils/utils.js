@@ -134,6 +134,11 @@ async function chatWithMirrorSelf(chat) {
     } finally {}
 }
 
+// Called in word_circle.js because mirror count down is there.
+async function removeAllSpeechFiles() {
+  const response = await fetch('/cleanup');
+}
+
 function generateUniqueId() {
     const timestamp = Date.now();
     const randomNumber = Math.random();

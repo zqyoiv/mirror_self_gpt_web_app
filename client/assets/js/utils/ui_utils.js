@@ -244,11 +244,3 @@ function speechRecognitionSetup(inputBox) {
     return speechRecognition;
   }
 }
-
-async function removeAllSpeechFiles() {
-  const response = await fetch('/cleanup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({})
-  });
-}
