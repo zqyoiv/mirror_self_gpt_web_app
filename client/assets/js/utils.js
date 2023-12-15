@@ -1,3 +1,12 @@
+// ========================================================
+//  Contents:
+//  1. ChatGPT call utilities.
+//  2. Video call utilities.
+//  3. Speech recognition.
+//  4. Serial communication related utilities.
+//  5. Audio play related utility functions.
+// ========================================================
+
 let gptAudio;
 let speechRecognition;
 
@@ -12,7 +21,7 @@ function sleep(ms) {
 }
 
 // ========================================================
-//     ChatGPT call utilities.
+//     1. ChatGPT call utilities.
 // ========================================================
 
 const answerInput = document.getElementById('answer-input');
@@ -110,6 +119,7 @@ async function chatWithMirrorSelf(chat) {
         }
         // switch from loading state to mirror state.
         if (storyboardController.state == LOADING_STATE) {
+          loadingStateButtonSetup();
           // stop recording video and play in loading scene.
           sendStopAndPlayRequest();
           serial.write("All Set");
@@ -135,7 +145,7 @@ function generateUniqueId() {
 }
 
 // ========================================================
-//     Video call utilities.
+//     2. Video call utilities.
 // ========================================================
 
 // Start recording video when the first next button is pressed.
@@ -157,7 +167,7 @@ function sendStopAndPlayRequest() {
 }
 
 // ========================================================
-//     Speech recognition.
+//     3. Speech recognition.
 // ========================================================
 
 function speechRecognitionSetup(inputBox) {
@@ -230,7 +240,7 @@ function removeAllSpeechFiles() {
 }
 
 // ========================================================
-//      Serial communication related utilities.
+//      4. Serial communication related utilities.
 // ========================================================
 // if there's no port selected,
 // make a port select button appear:
@@ -286,7 +296,7 @@ function makePortButton() {
   }
 
 // ========================================================
-//      Audio play related utility functions.
+//      5. Audio play related utility functions.
 // ========================================================
 
 const seasonAudioUrls = [
@@ -374,127 +384,4 @@ function playDayNightMusicFromText(text) {
       dayAudioFiles[1].play();
       break;
   }
-}
-
-
-// ========================================================
-//      UI Control
-// ========================================================
-
-function pushButtonNextStepHandler() {
-  background(255);
-  $("video#recording-label")[0].style.display = "none";
-  if (storyboardController.state == INSTRUCTION_STATE) {
-      if (storyboardController.instructionNumber == 1) {
-        // first time click next button, start recording video.
-        sendStartRecordRequest();
-      }
-      questionDisplayer.displayInstruction(storyboardController.instructionNumber);
-      inputBox.hide();
-      storyboardController.nextInstruction();
-  } else if (storyboardController.state == QUESTION_STATE) {
-    handleQuestionStateSubmit();
-  } else if (storyboardController.state == MIRROR_STATE) {
-    handleMirrorStateSubmit();
-  }
-}
-
-function handleMirrorStateSubmit() {
-    inputBox.hide();
-
-    let answer = inputBox.value();
-    mirrorSelfDisplayer.display();
-    
-    // When type less than 3 words, show error message.
-    if (answer == "" || ((storyboardController.questionNumber != 6) 
-                        && (storyboardController.questionNumber != 0) 
-                        && answer.split(" ") >= 3)) {
-        fill("red");
-        text("Mind sharing a bit more?", 30, 50);
-    } else {
-        chatWithMirrorSelf(answer, (response) => {
-            redrawBackgroundAndSetTextConfig();
-            text(responseText,
-            30,
-            windowHeight / 2 - 50,
-            windowWidth - 40,
-            windowHeight / 2 - 50);
-        });
-        inputBox.value("");
-    }
-}
-
-// 1. Send the user answer to the current question to server.
-// 2. Display next question.
-
-function handleQuestionStateSubmit() {
-    let answer = inputBox.value();
-    let currentQuestionIndex = storyboardController.questionNumber;
-    let lastQuestionIndex = currentQuestionIndex - 1;
-    if (IS_AUDIO_MODE) {
-      $("video#recording-label")[0].style.display = "block";
-    } else {
-      inputBox.show();
-    }
-
-    if (currentQuestionIndex == 0) {
-        questionDisplayer.displayQuestion(storyboardController.questionNumber);
-        storyboardController.nextQuestion();
-        inputBox.value("");
-    } else if (currentQuestionIndex > 0) {
-      if (answer == "") {
-          // Block user from submitting empty answer.
-          questionDisplayer.displayQuestion(lastQuestionIndex);
-          fill("red");
-          text("Please say something.", 30, 50);
-      } else {
-        // Send last question's answer to GPT
-        sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
-        inputBox.value("");
-
-        if (lastQuestionIndex == 6) {
-          if (answer.indexOf("es") != -1) {
-            storyboardController.isQuestion6Yes = true;
-            storyboardController.questionNumber = 7;
-            currentQuestionIndex = storyboardController.questionNumber;
-            questionDisplayer.displayQuestion(currentQuestionIndex);
-            inputBox.value("");
-          } else {
-            storyboardController.isQuestion6Yes = false;
-            storyboardController.questionNumber = 8;
-            currentQuestionIndex = storyboardController.questionNumber;
-            questionDisplayer.displayQuestion(currentQuestionIndex);
-            inputBox.value("");
-            console.log("---- updates isQuestion6Yes: false");
-          }
-        } else {
-          questionDisplayer.displayQuestion(currentQuestionIndex);
-          inputBox.value("");
-        }
-
-        // Play audio.
-        if (lastQuestionIndex == 4) {
-          playDayNightMusicFromText(answer);
-        } else if (lastQuestionIndex == 5) {
-          playSeasonMusicFromText(answer);
-        }
-
-        if (currentQuestionIndex == 10) {
-          storyboardController.nextState();
-        } else {
-          storyboardController.nextQuestion(); 
-        }
-        
-        loadingStartTime = millis();
-      }
-  }               
-}
-
-// ========================================================
-//      p5 drawing
-// ========================================================
-
-function redrawBackgroundAndSetTextConfig() {
-  background(255);
-  fill(60);
 }

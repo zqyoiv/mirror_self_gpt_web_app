@@ -15,7 +15,8 @@ select {
     text-overflow: ellipsis;
 }
 
-img#next-button {
+img#next-button,
+img#submit-button {
     width: 100px;
     height: 100px;
     top: 75%;

@@ -3,7 +3,6 @@ IS_DEBUG = true;
 const answerSubmitButton = document.getElementById('answer-submit-button');
 const configGPTResponseDiv = document.getElementById('prompt-config-gpt-reponse-container');
 
-let mirrorSelfDisplayer = new MirrorSelfDisplayer();
 let questionDisplayer = new QuestionDisplayer();
 let storyboardController = new StoryboardController();
 let speechRecognition = speechRecognitionSetup();
