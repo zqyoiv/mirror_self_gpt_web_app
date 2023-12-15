@@ -23,8 +23,6 @@ let loadingDuration = 5000;
 let loadingText = "";
 let loadingStartTime = 0;
 
-// 在全局范围内声明输入框和按钮
-let inputBox;
 // let sendButton;
 let userInputs = []; // 存储用户输入的内容
 
@@ -97,9 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       $("video#recording-label")[0].pause();
       $("video#recording-label")[0].currentTime = 0;
-      speechRecognition.stop();
-      $("video#recording-label")[0].style.display = "none";
-      $("img#submit-button")[0].style.display = "block";
+      speechRecognition.stop();   
     }
   });
 
@@ -139,19 +135,9 @@ function draw() {
     } else if (storyboardController.state == MIRROR_STATE) {
         wordCircle.draw();
 
-        $("video#recording-label")[0].style.display = "none";
-        $("video#recording-label-black")[0].style.display = "block";
-
-        // $("img#next-button")[0].style.display = "none";
-        // mirrorSelfDisplayer.display();
-
         if (!IS_AUDIO_MODE) {
           inputBox.show();
         }
-
-        // let countDownTimer = storyboardController.mirrorCountDowntext();
-        // fill('red');
-        // text(countDownTimer, 30, 50);
     } else if (storyboardController.state == END_STATE) {
       removeAllSpeechFiles();
       location.reload();

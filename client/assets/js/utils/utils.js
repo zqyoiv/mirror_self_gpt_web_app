@@ -2,17 +2,11 @@
 //  Contents:
 //  1. ChatGPT call utilities.
 //  2. Video call utilities.
-//  3. Speech recognition.
-//  4. Serial communication related utilities.
-//  5. Audio play related utility functions.
+//  3. Serial communication related utilities.
+//  4. Audio play related utility functions.
 // ========================================================
 
 let gptAudio;
-let speechRecognition;
-
-let recordingButton;
-let isRecordButtonPressed = false;
-let isRecognitionStarted = false;
 
 let video_server_ip = "https://mirror-portrait-05692208a0fa.herokuapp.com/";
 
@@ -167,80 +161,7 @@ function sendStopAndPlayRequest() {
 }
 
 // ========================================================
-//     3. Speech recognition.
-// ========================================================
-
-function speechRecognitionSetup(inputBox) {
-  if ("webkitSpeechRecognition" in window) {
-    // Speech Recognition Stuff goes here
-    speechRecognition = new webkitSpeechRecognition();
-    speechRecognition.continuous = true;
-    speechRecognition.lang = "en-US";
-    // Whether to return interim results (results that are not yet final)
-    speechRecognition.interimResults = true;
-
-    speechRecognition.onstart = function() {
-      isRecognitionStarted = true;
-    };
-
-    speechRecognition.onend = function() {
-      isRecognitionStarted = false;
-    };
-
-    // Define the event handler for the result event
-    speechRecognition.onresult = function(event) {
-        for (var i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-                // Final transcript of the recognized speech
-                var transcript = event.results[i][0].transcript;
-                inputBox.value = inputBox.value + " " + transcript;
-                inputBox.textContent = inputBox.value;
-                console.log('Final result: ' + transcript);
-                // isRecordButtonPressed is set in record button action handler
-                pushButtonNextStepHandler();
-            } else {
-                // Interim result
-                var interimTranscript = event.results[i][0].transcript;
-                console.log('Interim result: ' + interimTranscript);
-            }
-        }
-    };
-
-  } else {
-    console.log("Speech Recognition Not Available");
-  }
-  return speechRecognition;
-}
-
-function removeAllSpeechFiles() {
-  const fs = require('fs');
-  const path = require('path');
-
-  const directoryPath = 'path/to/your/directory';
-
-  fs.readdir(directoryPath, (err, files) => {
-    if (err) {
-      console.error('Error reading directory:', err);
-      return;
-    }
-
-    files.forEach(file => {
-      if (file.includes('speech')) {
-        const filePath = path.join(directoryPath, file);
-        fs.unlink(filePath, err => {
-          if (err) {
-            console.error('Error deleting file:', err);
-          } else {
-            console.log(`Deleted file: ${filePath}`);
-          }
-        });
-      }
-    });
-  });
-}
-
-// ========================================================
-//      4. Serial communication related utilities.
+//      3. Serial communication related utilities.
 // ========================================================
 // if there's no port selected,
 // make a port select button appear:
@@ -296,7 +217,7 @@ function makePortButton() {
   }
 
 // ========================================================
-//      5. Audio play related utility functions.
+//      4. Audio play related utility functions.
 // ========================================================
 
 const seasonAudioUrls = [

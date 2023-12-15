@@ -15,6 +15,26 @@ select {
     text-overflow: ellipsis;
 }
 
+div.info-display {
+    color: gray;
+    font-size: 20px;
+    top: 68%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+}
+
+div.info-display#error {
+    color:red;
+    font-size: 20px;
+    top: 68%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+}
+
 img#next-button,
 img#submit-button {
     width: 100px;
