@@ -118,8 +118,12 @@ async function chatWithMirrorSelf(chat) {
           sendStopAndPlayRequest();
           serial.write("All Set");
           console.log("--------------------- All set sent ----------------------");
+          mirrorStateButtonSetup();
           storyboardController.nextState();
           wordCircle.startTimer();
+        }
+        if (storyboardController.state == MIRROR_STATE) {
+          mirrorStateButtonSetup();
         }
         addResponse(false, `<div>Mirror response: \n${mirrorText}</div>`);
         return mirrorText;

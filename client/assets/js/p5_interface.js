@@ -135,9 +135,7 @@ function draw() {
         );
         loadingStateButtonSetup();
         updateLoadingText();
-    } else if (storyboardController.state == MIRROR_STATE) {
-        // need to be here bc mirror state keep redraw canvas
-        mirrorStateButtonSetup();
+    } else if (storyboardController.state == MIRROR_STATE) {        
         wordCircle.draw();
         if (!IS_AUDIO_MODE) {
           inputBox.show();
@@ -158,6 +156,7 @@ function updateLoadingText() {
 // Debug workflow, simulate button pushing.
 function keyPressed() {
   if (key === '1') {
+    inputBox.value = "yes";
     pushButtonNextStepHandler();
   }
 }

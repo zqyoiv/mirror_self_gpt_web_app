@@ -20,6 +20,11 @@ class WordCircle {
 
     startTimer() {
         this.startTime = millis();
+        sleep(this.totalDuration)
+            .then(() => {
+                removeAllSpeechFiles();
+                window.location.reload();
+            });
     }
 
     draw() {

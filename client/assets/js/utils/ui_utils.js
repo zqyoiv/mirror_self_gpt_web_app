@@ -2,10 +2,8 @@
 //  Contents:
 //  1. UI Display
 //  2. UI State Handlers
-//  2. Speech recognition
-//  3. p5 drawing
+//  3. Speech recognition
 // ========================================================
-
 let speechRecognition;
 let recordingButton;
 let isRecognitionStarted = false;
@@ -14,10 +12,12 @@ let speechResult;
 
 let inputBox;
 
-const CHECK_MARK_TIMER = 500;
+const CHECK_MARK_TIMER = 1000;
 // ========================================================
 //      1. UI Display
 // ========================================================
+
+// ============= set up icons =====================
 
 function questionStateButtonSetup() {
   $("img#next-button")[0].style.display = "none";
@@ -47,6 +47,8 @@ function loadingStateButtonSetup() {
   $("video#recording-label-black")[0].style.display = "none";
 }
 
+// =============== msg display ========================
+
 function displayClickOneMessage() {
   $('div.info-display').attr("id", "");
   $('div.info-display').text("Tap the button to start recording.");
@@ -67,6 +69,8 @@ function clearInfoDisplay() {
   $('div.info-display').attr("id", "");
   $('div.info-display').text("");
 }
+
+// ================= redraw ========================
 
 function redrawBackgroundAndSetTextConfig() {
   background(255);
@@ -94,7 +98,7 @@ function pushButtonNextStepHandler() {
 }
 
 function handleMirrorStateSubmit() {
-    let answer = inputBox.value();
+    let answer = speechResult;
     
     // When type less than 3 words, show error message.
     if (answer == "" || ((storyboardController.questionNumber != 6) 
@@ -111,7 +115,7 @@ function handleMirrorStateSubmit() {
             windowWidth - 40,
             windowHeight / 2 - 50);
         });
-        inputBox.value("");
+        inputBox.value = "";
     }
 }
 
@@ -119,7 +123,7 @@ function handleMirrorStateSubmit() {
 // 2. Display next question.
 function handleQuestionStateSubmit() {
   questionStateButtonSetup();
-  let answer = inputBox.value();
+  let answer = speechResult;
   let currentQuestionIndex = storyboardController.questionNumber;
   let lastQuestionIndex = currentQuestionIndex - 1;
   if (IS_AUDIO_MODE) {
@@ -132,7 +136,7 @@ function handleQuestionStateSubmit() {
       displayClickOneMessage();
       questionDisplayer.displayQuestion(storyboardController.questionNumber);
       storyboardController.nextQuestion();
-      inputBox.value("");
+      inputBox.value = "";
   } else if (currentQuestionIndex > 0) {
     clearInfoDisplay();
     if (answer == "") {
@@ -142,7 +146,7 @@ function handleQuestionStateSubmit() {
     } else {
       // Send last question's answer to GPT
       sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
-      inputBox.value("");
+      inputBox.value = "";
 
       if (lastQuestionIndex == 6) {
         if (answer.indexOf("es") != -1) {
@@ -150,18 +154,18 @@ function handleQuestionStateSubmit() {
           storyboardController.questionNumber = 7;
           currentQuestionIndex = storyboardController.questionNumber;
           questionDisplayer.displayQuestion(currentQuestionIndex);
-          inputBox.value("");
+          inputBox.value = "";
         } else {
           storyboardController.isQuestion6Yes = false;
           storyboardController.questionNumber = 8;
           currentQuestionIndex = storyboardController.questionNumber;
           questionDisplayer.displayQuestion(currentQuestionIndex);
-          inputBox.value("");
+          inputBox.value = "";
           // console.log("---- updates isQuestion6Yes: false");
         }
       } else {
         questionDisplayer.displayQuestion(currentQuestionIndex);
-        inputBox.value("");
+        inputBox.value = "";
       }
 
       // Play audio.
@@ -197,6 +201,7 @@ function speechRecognitionSetup(inputBox) {
 
     speechRecognition.onstart = function() {
       speechResult = "";
+      inputBox.value = "";
       if (storyboardController.questionNumber > 1) {
         clearInfoDisplay();
       }
@@ -225,47 +230,25 @@ function speechRecognitionSetup(inputBox) {
     };
 
     speechRecognition.onresult = function(event) {
-        for (var i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i]) {
-                // Final transcript of the recognized speech
-                var transcript = event.results[i][0].transcript;
-                inputBox.value = inputBox.value + " " + transcript;
-                inputBox.textContent = inputBox.value;
-                console.log('Final result: ' + transcript);
-            }
+      for (var i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          var transcript = event.results[i][0].transcript;
+          inputBox.value = inputBox.value + " " + transcript;
+          inputBox.textContent = inputBox.value;
+          console.log('Final result: ' + transcript);
         }
-        speechResult = inputBox.value;
+      }
+      console.log('result: ' + inputBox.value);
+      speechResult = inputBox.value;
     };
-
-  } else {
-    console.log("Speech Recognition Not Available");
+    return speechRecognition;
   }
-  return speechRecognition;
 }
 
-function removeAllSpeechFiles() {
-  const fs = require('fs');
-  const path = require('path');
-
-  const directoryPath = 'path/to/your/directory';
-
-  fs.readdir(directoryPath, (err, files) => {
-    if (err) {
-      console.error('Error reading directory:', err);
-      return;
-    }
-
-    files.forEach(file => {
-      if (file.includes('speech')) {
-        const filePath = path.join(directoryPath, file);
-        fs.unlink(filePath, err => {
-          if (err) {
-            console.error('Error deleting file:', err);
-          } else {
-            console.log(`Deleted file: ${filePath}`);
-          }
-        });
-      }
-    });
+async function removeAllSpeechFiles() {
+  const response = await fetch('/cleanup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({})
   });
 }

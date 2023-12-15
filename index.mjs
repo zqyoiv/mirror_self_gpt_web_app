@@ -240,6 +240,38 @@ app.post('/text-to-speech', async (req, res) => {
     }
 });
 
+/* Clean up all speach files. */
+app.post('/cleanup', async (req, res) => {
+    try {
+        const directoryPath = "./client/";
+
+        fs.readdir(directoryPath, (err, files) => {
+            if (err) {
+            console.error('Error reading directory:', err);
+            return;
+            }
+
+            files.forEach(file => {
+                if (file.includes('speech')) {
+                    const filePath = path.join(directoryPath, file);
+                    fs.unlink(filePath, err => {
+                    if (err) {
+                        console.error('Error deleting file:', err);
+                    } else {
+                        console.log(`Deleted file: ${filePath}`);
+                    }
+                    });
+                }
+            });
+        });
+        } catch (error) {
+        const errorMsg = error.response ? error.response.error : `${error}`;
+        console.error(errorMsg);
+        // Send a 500 status code and the error message as the response
+        return res.status(500).send(errorMsg);
+    }
+});
+
 async function sendTextToSpeech(text) {
     const fileName = "speech" + response_counter + ".mp3";
     response_counter += 1;
