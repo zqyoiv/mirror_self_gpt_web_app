@@ -13,6 +13,7 @@ let speechResult;
 
 let inputBox;
 
+const CHECK_MARK_TIMER = 500;
 // ========================================================
 //      1. UI Control
 // ========================================================
@@ -151,9 +152,14 @@ function handleQuestionStateSubmit() {
 }
   
   function displayInputMoreMessage() {
-    console.log("displayInputMoreMessage()");
+    // console.log("displayInputMoreMessage()");
     $('div.info-display').attr("id", "error");
     $('div.info-display').text("Please say something.");
+  }
+
+  function clearInfoDisplay() {
+    $('div.info-display').attr("id", "");
+    $('div.info-display').text("");
   }
 
   // ========================================================
@@ -171,18 +177,22 @@ function speechRecognitionSetup(inputBox) {
 
     speechRecognition.onstart = function() {
       isRecognitionStarted = true;
+      speechResult = "";
+      clearInfoDisplay();
     };
 
     speechRecognition.onend = function() {
       isRecognitionStarted = false;
       isSpeechReadyToSubmit = speechResult !== "" ? true : false;
-        if (isSpeechReadyToSubmit) {
-          $("video#recording-label")[0].style.display = "none";
-          $("img#submit-button")[0].style.display = "block";
+      if (isSpeechReadyToSubmit) {
+        $("video#recording-label")[0].style.display = "none";
+        $("img#submit-button")[0].style.display = "block";
+        sleep(CHECK_MARK_TIMER).then(() => {
           pushButtonNextStepHandler();
-        } else {
-          displayInputMoreMessage();
-        }
+        });
+      } else {
+        displayInputMoreMessage();
+      }
     };
 
     speechRecognition.onresult = function(event) {

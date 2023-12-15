@@ -109,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
       $("video#recording-label-black")[0].currentTime = 0;
       speechRecognition.stop();
       $("video#recording-label-black")[0].style.display = "none";
-      $("img#submit-button")[0].style.display = "block";
     }
   });
 
