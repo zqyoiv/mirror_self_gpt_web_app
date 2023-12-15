@@ -91,6 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // console.log("recording-label clicked");
     isRecognitionStarted = !isRecognitionStarted;
     if (isRecognitionStarted) {
+      if (storyboardController.questionNumber == 1) {
+        displayClickTwoMessage();
+      }
       $("video#recording-label")[0].play();
       speechRecognition.start();
     } else {

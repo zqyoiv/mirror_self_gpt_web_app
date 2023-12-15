@@ -1,6 +1,7 @@
 // ========================================================
 //  Contents:
-//  1. UI Control
+//  1. UI Display
+//  2. UI State Handlers
 //  2. Speech recognition
 //  3. p5 drawing
 // ========================================================
@@ -15,7 +16,7 @@ let inputBox;
 
 const CHECK_MARK_TIMER = 500;
 // ========================================================
-//      1. UI Control
+//      1. UI Display
 // ========================================================
 
 function questionStateButtonSetup() {
@@ -45,6 +46,36 @@ function loadingStateButtonSetup() {
   $("video#recording-label")[0].style.display = "none";
   $("video#recording-label-black")[0].style.display = "none";
 }
+
+function displayClickOneMessage() {
+  $('div.info-display').attr("id", "");
+  $('div.info-display').text("Tap the button to start recording.");
+}
+
+function displayClickTwoMessage() {
+  $('div.info-display').attr("id", "");
+  $('div.info-display').text("Tap the button again to stop recording.");
+}
+
+function displayInputMoreMessage() {
+  // console.log("displayInputMoreMessage()");
+  $('div.info-display').attr("id", "error");
+  $('div.info-display').text("Please say something.");
+}
+
+function clearInfoDisplay() {
+  $('div.info-display').attr("id", "");
+  $('div.info-display').text("");
+}
+
+function redrawBackgroundAndSetTextConfig() {
+  background(255);
+  fill(60);
+}
+
+// ========================================================
+//      2. UI State Handlers
+// ========================================================
 
 function pushButtonNextStepHandler() {
   if (storyboardController.state == INSTRUCTION_STATE) {
@@ -98,10 +129,12 @@ function handleQuestionStateSubmit() {
   }
 
   if (currentQuestionIndex == 0) {
+      displayClickOneMessage();
       questionDisplayer.displayQuestion(storyboardController.questionNumber);
       storyboardController.nextQuestion();
       inputBox.value("");
   } else if (currentQuestionIndex > 0) {
+    clearInfoDisplay();
     if (answer == "") {
         // Block user from submitting empty answer.
         questionDisplayer.displayQuestion(lastQuestionIndex);
@@ -148,20 +181,9 @@ function handleQuestionStateSubmit() {
     }
   }               
 }
-  
-  function displayInputMoreMessage() {
-    // console.log("displayInputMoreMessage()");
-    $('div.info-display').attr("id", "error");
-    $('div.info-display').text("Please say something.");
-  }
-
-  function clearInfoDisplay() {
-    $('div.info-display').attr("id", "");
-    $('div.info-display').text("");
-  }
 
 // ========================================================
-//     2. Speech recognition.
+//     3. Speech recognition.
 // ========================================================
 
 function speechRecognitionSetup(inputBox) {
@@ -175,7 +197,9 @@ function speechRecognitionSetup(inputBox) {
 
     speechRecognition.onstart = function() {
       speechResult = "";
-      clearInfoDisplay();
+      if (storyboardController.questionNumber > 1) {
+        clearInfoDisplay();
+      }
     };
 
     speechRecognition.onend = function() {
@@ -244,13 +268,4 @@ function removeAllSpeechFiles() {
       }
     });
   });
-}
-
-// ========================================================
-//      3. p5 drawing
-// ========================================================
-
-function redrawBackgroundAndSetTextConfig() {
-  background(255);
-  fill(60);
 }
