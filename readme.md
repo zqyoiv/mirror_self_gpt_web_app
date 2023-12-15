@@ -13,7 +13,7 @@ npm install
 ```
 3. Create a .env file in the root folder and add your OpenAI API key in the following format:
 ```sh
-exportOPENAI_API_KEY=your_api_key
+export OPENAI_API_KEY=your_api_key
 ```
 If doesn't work, manually update OPEN_API_KEY in index.mjs and prompt_processor.mjs.
 4. Start node server
@@ -25,7 +25,7 @@ node index.mjs
 ```sh
 https://mirror-portrait-05692208a0fa.herokuapp.com/
 ```
-### Debug
+### Debug Mode
 1. go to client/assets/js/constant.js
 change line 7 to:
 ```sh
