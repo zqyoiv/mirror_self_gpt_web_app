@@ -3,7 +3,7 @@ const QUESTION_FONT_SIZE = 48;
 class QuestionDisplayer {
     constructor () {
         this.instructionList = [
-            "Welcome! Please take a seat and put on the headset, push the button to start.",
+            "Welcome! Please take a seat and put on the headset, tap the button to start.",
             "Over the next few minutes, you'll answer a few questions. Thoughtful responses make the experience more enjoyable.",
             "Your information will be deleted after this session. Let's begin!"
         ];
