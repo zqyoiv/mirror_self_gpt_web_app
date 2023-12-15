@@ -1,5 +1,3 @@
-let IS_DEBUG = false;
-let IS_AUDIO_MODE = true;
 let gptAudio;
 let speechRecognition;
 

@@ -131,7 +131,7 @@ app.post('/question-answer', async (req, res) => {
         // Set mirror gender.
         if (questionNumber == 0) {
             if (answer.indexOf("she") != -1 || answer.indexOf("her") != -1) {
-                mirror_voice_name = "nova";
+                mirror_voice_name = "alloy";
             } else if (answer.indexOf("he") != -1 || answer.indexOf("him") != -1) {
                 mirror_voice_name = "onyx";
             } else {
