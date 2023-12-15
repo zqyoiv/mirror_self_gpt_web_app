@@ -85,9 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
   $("video#recording-label")[0].style.display = "none";
   $("video#recording-label-black")[0].style.display = "none";
   $("img#submit-button")[0].style.display = "none";
+  $("img#submit-button-black")[0].style.display = "none";
 
   $("video#recording-label").on("click", function() {
-    console.log("recording-label clicked");
+    // console.log("recording-label clicked");
     isRecognitionStarted = !isRecognitionStarted;
     if (isRecognitionStarted) {
       $("video#recording-label")[0].play();
@@ -108,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
       $("video#recording-label-black")[0].pause();
       $("video#recording-label-black")[0].currentTime = 0;
       speechRecognition.stop();
-      $("video#recording-label-black")[0].style.display = "none";
     }
   });
 
@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function draw() {
     if (storyboardController.state == LOADING_STATE) {
+        // need to be here bc mirror state keep redraw canvas
         background(255);
         fill(0);
         text(
@@ -129,11 +130,12 @@ function draw() {
             windowWidth - 40,
             windowHeight / 2 - 150
         );
-        inputBox.hide();
+        loadingStateButtonSetup();
         updateLoadingText();
     } else if (storyboardController.state == MIRROR_STATE) {
+        // need to be here bc mirror state keep redraw canvas
+        mirrorStateButtonSetup();
         wordCircle.draw();
-
         if (!IS_AUDIO_MODE) {
           inputBox.show();
         }

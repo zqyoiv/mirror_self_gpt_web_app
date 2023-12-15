@@ -21,6 +21,7 @@ const CHECK_MARK_TIMER = 500;
 function questionStateButtonSetup() {
   $("img#next-button")[0].style.display = "none";
   $("img#submit-button")[0].style.display = "none";
+  $("img#submit-button-black")[0].style.display = "none";
   $("video#recording-label-black")[0].style.display = "none";
 
   $("video#recording-label")[0].style.display = "block";
@@ -30,6 +31,7 @@ function mirrorStateButtonSetup() {
   inputBox.hide();
   $("img#next-button")[0].style.display = "none";
   $("img#submit-button")[0].style.display = "none";
+  $("img#submit-button-black")[0].style.display = "none";
   $("video#recording-label")[0].style.display = "none";
 
   $("video#recording-label-black")[0].style.display = "block";
@@ -39,13 +41,12 @@ function loadingStateButtonSetup() {
   inputBox.hide();
   $("img#next-button")[0].style.display = "none";
   $("img#submit-button")[0].style.display = "none";
+  $("img#submit-button-black")[0].style.display = "none";
   $("video#recording-label")[0].style.display = "none";
   $("video#recording-label-black")[0].style.display = "none";
 }
 
 function pushButtonNextStepHandler() {
-  background(255);
-  $("video#recording-label")[0].style.display = "none";
   if (storyboardController.state == INSTRUCTION_STATE) {
       if (storyboardController.instructionNumber == 1) {
         // first time click next button, start recording video.
@@ -62,10 +63,7 @@ function pushButtonNextStepHandler() {
 }
 
 function handleMirrorStateSubmit() {
-    mirrorStateButtonSetup();
-
     let answer = inputBox.value();
-    mirrorSelfDisplayer.display();
     
     // When type less than 3 words, show error message.
     if (answer == "" || ((storyboardController.questionNumber != 6) 
@@ -126,7 +124,7 @@ function handleQuestionStateSubmit() {
           currentQuestionIndex = storyboardController.questionNumber;
           questionDisplayer.displayQuestion(currentQuestionIndex);
           inputBox.value("");
-          console.log("---- updates isQuestion6Yes: false");
+          // console.log("---- updates isQuestion6Yes: false");
         }
       } else {
         questionDisplayer.displayQuestion(currentQuestionIndex);
@@ -162,7 +160,7 @@ function handleQuestionStateSubmit() {
     $('div.info-display').text("");
   }
 
-  // ========================================================
+// ========================================================
 //     2. Speech recognition.
 // ========================================================
 
@@ -176,7 +174,6 @@ function speechRecognitionSetup(inputBox) {
     speechRecognition.interimResults = true;
 
     speechRecognition.onstart = function() {
-      isRecognitionStarted = true;
       speechResult = "";
       clearInfoDisplay();
     };
@@ -185,11 +182,19 @@ function speechRecognitionSetup(inputBox) {
       isRecognitionStarted = false;
       isSpeechReadyToSubmit = speechResult !== "" ? true : false;
       if (isSpeechReadyToSubmit) {
-        $("video#recording-label")[0].style.display = "none";
-        $("img#submit-button")[0].style.display = "block";
-        sleep(CHECK_MARK_TIMER).then(() => {
-          pushButtonNextStepHandler();
-        });
+        if (storyboardController.state == QUESTION_STATE) {
+          $("video#recording-label")[0].style.display = "none";
+          $("img#submit-button")[0].style.display = "block";
+          sleep(CHECK_MARK_TIMER).then(() => {
+            pushButtonNextStepHandler();
+          });
+        } else if (storyboardController.state == MIRROR_STATE) {
+          $("video#recording-label-black")[0].style.display = "none";
+          $("img#submit-button-black")[0].style.display = "block";
+          sleep(CHECK_MARK_TIMER).then(() => {
+            pushButtonNextStepHandler();
+          });
+        }
       } else {
         displayInputMoreMessage();
       }

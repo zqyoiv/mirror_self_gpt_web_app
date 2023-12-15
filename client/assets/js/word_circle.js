@@ -1,3 +1,5 @@
+// Count down visual for mirror state.
+
 class WordCircle {
     constructor () {
         this.paragraph = "";

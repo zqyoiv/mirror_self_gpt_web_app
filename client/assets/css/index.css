@@ -36,7 +36,9 @@ div.info-display#error {
 }
 
 img#next-button,
-img#submit-button {
+img#submit-button,
+img#submit-button-black 
+{
     width: 100px;
     height: 100px;
     top: 75%;
