@@ -1,4 +1,12 @@
+// ========================================================
+//  Contents:
+//  1. p5 Canvas drawing functions.
+//  2. HTML event handlers
+//  3. Debug
+//
 // original version: https://editor.p5js.org/qh2207/sketches/5SfuOIngg
+// ========================================================
+
 const serial = new p5.WebSerial();
 
 let distance = 0;
@@ -29,6 +37,10 @@ let userInputs = []; // 存储用户输入的内容
 let questionDisplayer = new QuestionDisplayer();
 let storyboardController = new StoryboardController();
 let wordCircle = new WordCircle();
+
+// ========================================================
+//     1. p5 Canvas drawing functions.
+// ========================================================
 
 function preload() {
   preloadAudio();
@@ -80,6 +92,42 @@ function setup() {
   storyboardController.nextInstruction();
 }
 
+function draw() {
+    if (storyboardController.state == LOADING_STATE) {
+        // need to be here bc mirror state keep redraw canvas
+        background(255);
+        fill(0);
+        text(
+            loadingText,
+            30,
+            windowHeight / 2 - 180,
+            windowWidth - 40,
+            windowHeight / 2 - 150
+        );
+        loadingStateButtonSetup();
+        updateLoadingText();
+    } else if (storyboardController.state == MIRROR_STATE) {        
+        wordCircle.draw();
+        if (!IS_AUDIO_MODE) {
+          inputBox.show();
+        }
+    } else if (storyboardController.state == END_STATE) {
+      removeAllSpeechFiles();
+      location.reload();
+    }
+}
+
+function updateLoadingText() {
+  let currentTime = millis();
+  let loadingEllipses = Math.floor((currentTime - loadingStartTime) / 500) % 7;
+  textSize(100);
+  loadingText = ".".repeat(loadingEllipses);
+}
+
+// ========================================================
+//     2. HTML event handlers
+// ========================================================
+
 window.onload = function() {
   // Reload the visual app when mirror self application is reloaded.
   resetMirrorVisual();
@@ -126,37 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 }, false);
 
-function draw() {
-    if (storyboardController.state == LOADING_STATE) {
-        // need to be here bc mirror state keep redraw canvas
-        background(255);
-        fill(0);
-        text(
-            loadingText,
-            30,
-            windowHeight / 2 - 180,
-            windowWidth - 40,
-            windowHeight / 2 - 150
-        );
-        loadingStateButtonSetup();
-        updateLoadingText();
-    } else if (storyboardController.state == MIRROR_STATE) {        
-        wordCircle.draw();
-        if (!IS_AUDIO_MODE) {
-          inputBox.show();
-        }
-    } else if (storyboardController.state == END_STATE) {
-      removeAllSpeechFiles();
-      location.reload();
-    }
-}
-
-function updateLoadingText() {
-  let currentTime = millis();
-  let loadingEllipses = Math.floor((currentTime - loadingStartTime) / 500) % 7;
-  textSize(100);
-  loadingText = ".".repeat(loadingEllipses);
-}
+// ========================================================
+//     3. Debug
+// ========================================================
 
 // Debug workflow, simulate button pushing.
 function keyPressed() {
@@ -171,14 +191,4 @@ function keyPressed() {
     speechResult = "yes yes yes yes yes";
     pushButtonNextStepHandler();
   }
-}
-
-function serialEvent() {
-    let incomingData = serial.readStringUntil("\n");
-    if (incomingData !== null && incomingData.length > 0) {
-        // Button (guide --> question --> mirror)
-      if (incomingData.trim() === "B:1") {
-        pushButtonNextStepHandler();
-      }
-    }
 }
