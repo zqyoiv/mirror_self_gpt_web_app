@@ -22,10 +22,7 @@ class WordCircle {
         this.startTime = millis();
         sleep(this.totalDuration)
             .then(() => {
-                removeAllSpeechFiles();
                 window.location.reload();
-                serial.write("Reset");
-                resetMirrorVisual();
             });
     }
 

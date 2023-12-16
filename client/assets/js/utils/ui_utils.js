@@ -87,6 +87,13 @@ function redrawBackgroundAndSetTextConfig() {
 //      2. UI State Handlers
 // ========================================================
 
+function windowReloadHandler() {
+  console.log("-------- windowReloadHandler() -------");
+  removeAllSpeechFiles();
+  serial.write("Reset");
+  resetMirrorVisual();
+}
+
 function pushButtonNextStepHandler() {
   if (storyboardController.state == INSTRUCTION_STATE) {
       if (storyboardController.instructionNumber == 1) {

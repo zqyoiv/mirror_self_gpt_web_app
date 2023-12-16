@@ -130,20 +130,22 @@ function updateLoadingText() {
 
 window.onload = function() {
   // Reload the visual app when mirror self application is reloaded.
-  resetMirrorVisual();
+  windowReloadHandler();
 };
 
+const audio_element = "video#recording-label";
+const audio_element_black = "video#recording-label-black";
 const audio_video_path1 = "../assets/img/audio_1.mov";
 const audio_video_path2 = "../assets/img/audio_2.mov";
 const audio_video_black_path1 = "../assets/img/audio_black_1.mp4";
 const audio_video_black_path2 = "../assets/img/audio_black_2.mp4";
 
-function loadAndPlayVideo(path) {
-  $("video#recording-label")[0].pause();
-    $("video#recording-label").find("source").attr("src", path);
-    $("video#recording-label")[0].load(); 
-    $("video#recording-label")[0].currentTime = 0;
-    $("video#recording-label")[0].play();
+function loadAndPlayVideo(elementPath, path) {
+  $(elementPath)[0].pause();
+  $(elementPath).find("source").attr("src", path);
+  $(elementPath)[0].load(); 
+  $(elementPath)[0].currentTime = 0;
+  $(elementPath)[0].play();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -160,10 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (storyboardController.questionNumber == 1) {
         displayStopRecordingMessage();
       }
-      loadAndPlayVideo(audio_video_path1);
+      loadAndPlayVideo(audio_element, audio_video_path1);
       speechRecognition.start();
     } else {
-      loadAndPlayVideo(audio_video_path2);
+      loadAndPlayVideo(audio_element, audio_video_path2);
       speechRecognition.stop();   
     }
   });
@@ -171,10 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
   $("video#recording-label-black").on("click", function() {
     isRecognitionStarted = !isRecognitionStarted;
     if (isRecognitionStarted) {
-      loadAndPlayVideo(audio_video_black_path1);
+      loadAndPlayVideo(audio_element_black, audio_video_black_path1);
       speechRecognition.start();
     } else {
-      loadAndPlayVideo(audio_video_black_path2);
+      loadAndPlayVideo(audio_element_black, audio_video_black_path2);
       speechRecognition.stop();
     }
   });
