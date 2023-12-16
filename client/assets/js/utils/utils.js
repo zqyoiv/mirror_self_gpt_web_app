@@ -139,6 +139,10 @@ async function removeAllSpeechFiles() {
   const response = await fetch('/cleanup');
 }
 
+async function resetMirrorVisual() {
+  const response = await fetch(video_server_ip + 'reset');
+}
+
 function generateUniqueId() {
     const timestamp = Date.now();
     const randomNumber = Math.random();
@@ -264,6 +268,7 @@ function preloadAudio() {
 
 function playSeasonMusicFromText(text) {
   let season = 0;
+  if (!text) { return; }
   text = text.toLowerCase();
   if (text.indexOf("spring") != -1) {
     season = 1;
@@ -298,6 +303,7 @@ function playSeasonMusicFromText(text) {
 
 function playDayNightMusicFromText(text) {
   let timeIndicator = 0;
+  if (!text) { return; }
   text = text.toLowerCase();
   if (text.indexOf("day") != -1) {
     timeIndicator = 1;

@@ -80,6 +80,11 @@ function setup() {
   storyboardController.nextInstruction();
 }
 
+window.onload = function() {
+  // Reload the visual app when mirror self application is reloaded.
+  resetMirrorVisual();
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   // Audio record button
   $("video#recording-label")[0].style.display = "none";
@@ -157,6 +162,7 @@ function updateLoadingText() {
 function keyPressed() {
   if (key === '1') {
     inputBox.value = "yes";
+    speechResult = "yes";
     pushButtonNextStepHandler();
   }
 }

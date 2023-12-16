@@ -25,6 +25,7 @@ class WordCircle {
                 removeAllSpeechFiles();
                 window.location.reload();
                 serial.write("Reset");
+                resetMirrorVisual();
             });
     }
 
