@@ -133,6 +133,19 @@ window.onload = function() {
   resetMirrorVisual();
 };
 
+const audio_video_path1 = "../assets/img/audio_1.mov";
+const audio_video_path2 = "../assets/img/audio_2.mov";
+const audio_video_black_path1 = "../assets/img/audio_black_1.mp4";
+const audio_video_black_path2 = "../assets/img/audio_black_2.mp4";
+
+function loadAndPlayVideo(path) {
+  $("video#recording-label")[0].pause();
+    $("video#recording-label").find("source").attr("src", path);
+    $("video#recording-label")[0].load(); 
+    $("video#recording-label")[0].currentTime = 0;
+    $("video#recording-label")[0].play();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Audio record button
   $("video#recording-label")[0].style.display = "none";
@@ -145,13 +158,12 @@ document.addEventListener('DOMContentLoaded', () => {
     isRecognitionStarted = !isRecognitionStarted;
     if (isRecognitionStarted) {
       if (storyboardController.questionNumber == 1) {
-        displayClickTwoMessage();
+        displayStopRecordingMessage();
       }
-      $("video#recording-label")[0].play();
+      loadAndPlayVideo(audio_video_path1);
       speechRecognition.start();
     } else {
-      $("video#recording-label")[0].pause();
-      $("video#recording-label")[0].currentTime = 0;
+      loadAndPlayVideo(audio_video_path2);
       speechRecognition.stop();   
     }
   });
@@ -159,11 +171,10 @@ document.addEventListener('DOMContentLoaded', () => {
   $("video#recording-label-black").on("click", function() {
     isRecognitionStarted = !isRecognitionStarted;
     if (isRecognitionStarted) {
-      $("video#recording-label-black")[0].play();
+      loadAndPlayVideo(audio_video_black_path1);
       speechRecognition.start();
     } else {
-      $("video#recording-label-black")[0].pause();
-      $("video#recording-label-black")[0].currentTime = 0;
+      loadAndPlayVideo(audio_video_black_path2);
       speechRecognition.stop();
     }
   });
@@ -178,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //     3. Debug
 // ========================================================
 
-// Debug workflow, simulate button pushing.
+// Debug workflow, simulate button tapping.
 function keyPressed() {
   if (key === '1') {
     inputBox.value = "yes";

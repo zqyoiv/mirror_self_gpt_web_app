@@ -49,12 +49,12 @@ function loadingStateButtonSetup() {
 
 // =============== msg display ========================
 
-function displayClickOneMessage() {
+function displayStartRecordingMessage() {
   $('div.info-display').attr("id", "");
   $('div.info-display').text("Tap the button to start recording.");
 }
 
-function displayClickTwoMessage() {
+function displayStopRecordingMessage() {
   $('div.info-display').attr("id", "");
   $('div.info-display').text("Tap the button again to stop recording.");
 }
@@ -139,7 +139,7 @@ function handleQuestionStateSubmit() {
   }
 
   if (currentQuestionIndex == 0) {
-      displayClickOneMessage();
+      displayStartRecordingMessage();
       questionDisplayer.displayQuestion(storyboardController.questionNumber);
       storyboardController.nextQuestion();
       inputBox.value = "";
