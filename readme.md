@@ -26,6 +26,11 @@ node index.mjs
 https://mirror-portrait-05692208a0fa.herokuapp.com/
 ```
 ### Debug Mode
+#### UI workflow debug
+1. Open app as normal
+2. Answer question by pressing "1"(single word answer) and "2" (for more word answer).
+   
+#### Prompt Adjusting
 1. go to client/assets/js/constant.js
 change line 7 to:
 ```sh
