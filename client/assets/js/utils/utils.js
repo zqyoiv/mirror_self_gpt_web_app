@@ -33,11 +33,20 @@ function addResponse(selfFlag, prompt) {
     return uniqueId;
 }
 
+function setMirrorWordCircleText(answer, questionNumber) {
+  if (questionNumber === 7 || questionNumber === 8) {
+    let repeatTime = floor(100 / answer.length);
+    let wordCircleString = (answer + " ").repeat(repeatTime);
+    wordCircle.setup(wordCircleString);
+  }
+}
+
 /* 
  * In Question - Answer state, send user answer to server to update GPT
  * configuration.
  */
 async function sendAnswerToServer(answer, questionNumber, storyboardController) {
+    setMirrorWordCircleText(answer, questionNumber);
     try {
         // Send a POST request to the API with the prompt in the request body
         const response = await fetch('/question-answer', {
@@ -61,12 +70,6 @@ async function sendAnswerToServer(answer, questionNumber, storyboardController) 
             return;
         }
         const responseText = await response.text();
-
-        // Set mirror state word circle parameters as response for question 4.
-        if (questionNumber == 4) {
-          wordCircle.setup(responseText);
-        }
-
         return responseText;
     } catch (err) {
         const errorMsg = error.response ? error.response.data.error : `${error}`;
