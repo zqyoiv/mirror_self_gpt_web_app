@@ -59,10 +59,16 @@ function displayClickTwoMessage() {
   $('div.info-display').text("Tap the button again to stop recording.");
 }
 
-function displayInputMoreMessage() {
-  // console.log("displayInputMoreMessage()");
+function displaySaySomethingMessage() {
+  // console.log("say sth msg");
   $('div.info-display').attr("id", "error");
   $('div.info-display').text("Please say something.");
+}
+
+function displayShareMoreMessage() {
+  // console.log("share more msg");
+  $('div.info-display').attr("id", "error");
+  $('div.info-display').text("Would you mind sharing more？");
 }
 
 function clearInfoDisplay() {
@@ -142,47 +148,58 @@ function handleQuestionStateSubmit() {
     if (answer == "") {
         // Block user from submitting empty answer.
         questionDisplayer.displayQuestion(lastQuestionIndex);
-        displayInputMoreMessage();
-    } else {
-      // Send last question's answer to GPT
-      sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
-      inputBox.value = "";
+        displaySaySomethingMessage();
+        return;
+    }
+    // For these questions, block user when they say less than 5 words.
+    else if ([2, 3, 7, 8, 9].includes(lastQuestionIndex)) {
+      if (answer.split(" ").length < 5) {
+        // Block user from submitting empty answer.
+        questionDisplayer.displayQuestion(lastQuestionIndex);
+        displayShareMoreMessage();
+        return;
+      }
+    }
 
-      if (lastQuestionIndex == 6) {
-        if (answer.indexOf("es") != -1) {
-          storyboardController.isQuestion6Yes = true;
-          storyboardController.questionNumber = 7;
-          currentQuestionIndex = storyboardController.questionNumber;
-          questionDisplayer.displayQuestion(currentQuestionIndex);
-          inputBox.value = "";
-        } else {
-          storyboardController.isQuestion6Yes = false;
-          storyboardController.questionNumber = 8;
-          currentQuestionIndex = storyboardController.questionNumber;
-          questionDisplayer.displayQuestion(currentQuestionIndex);
-          inputBox.value = "";
-          // console.log("---- updates isQuestion6Yes: false");
-        }
-      } else {
+    // Send last question's answer to GPT
+    sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
+    inputBox.value = "";
+
+    if (lastQuestionIndex == 6) {
+      if (answer.indexOf("es") != -1) {
+        storyboardController.isQuestion6Yes = true;
+        storyboardController.questionNumber = 7;
+        currentQuestionIndex = storyboardController.questionNumber;
         questionDisplayer.displayQuestion(currentQuestionIndex);
         inputBox.value = "";
-      }
-
-      // Play audio.
-      if (lastQuestionIndex == 4) {
-        playDayNightMusicFromText(answer);
-      } else if (lastQuestionIndex == 5) {
-        playSeasonMusicFromText(answer);
-      }
-
-      if (currentQuestionIndex == 10) {
-        storyboardController.nextState();
       } else {
-        storyboardController.nextQuestion(); 
+        storyboardController.isQuestion6Yes = false;
+        storyboardController.questionNumber = 8;
+        currentQuestionIndex = storyboardController.questionNumber;
+        questionDisplayer.displayQuestion(currentQuestionIndex);
+        inputBox.value = "";
+        // console.log("---- updates isQuestion6Yes: false");
       }
-      
-      loadingStartTime = millis();
+    } else {
+      questionDisplayer.displayQuestion(currentQuestionIndex);
+      inputBox.value = "";
     }
+
+    // Play audio.
+    if (lastQuestionIndex == 4) {
+      playDayNightMusicFromText(answer);
+    } else if (lastQuestionIndex == 5) {
+      playSeasonMusicFromText(answer);
+    }
+
+    if (currentQuestionIndex == 10) {
+      storyboardController.nextState();
+    } else {
+      storyboardController.nextQuestion(); 
+    }
+    
+    loadingStartTime = millis();
+    
   }               
 }
 
@@ -225,7 +242,7 @@ function speechRecognitionSetup(inputBox) {
           });
         }
       } else {
-        displayInputMoreMessage();
+        displaySaySomethingMessage();
       }
     };
 

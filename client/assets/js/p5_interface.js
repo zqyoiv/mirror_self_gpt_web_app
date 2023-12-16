@@ -165,6 +165,12 @@ function keyPressed() {
     speechResult = "yes";
     pushButtonNextStepHandler();
   }
+  // for more answer questions.
+  else if (key === '2') {
+    inputBox.value = "yes yes yes yes yes";
+    speechResult = "yes yes yes yes yes";
+    pushButtonNextStepHandler();
+  }
 }
 
 function serialEvent() {
