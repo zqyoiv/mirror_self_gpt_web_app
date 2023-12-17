@@ -203,6 +203,9 @@ function openPort() {
   // once the port opens, let the user know:
   function initiateSerial() {
     console.log("port open");
+    // reload everything here bc otherwise Arduino connection is not established
+    // yet.
+    windowReloadHandler();
   }
   // hide the port button once a port is chosen:
   if (portButton) portButton.hide();

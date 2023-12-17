@@ -128,11 +128,6 @@ function updateLoadingText() {
 //     2. HTML event handlers
 // ========================================================
 
-window.onload = function() {
-  // Reload the visual app when mirror self application is reloaded.
-  windowReloadHandler();
-};
-
 const audio_element = "video#recording-label";
 const audio_element_black = "video#recording-label-black";
 const audio_video_path1 = "../assets/img/audio_1.mov";
