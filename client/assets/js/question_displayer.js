@@ -39,7 +39,7 @@ class QuestionDisplayer {
                 text(
                     this.instructionList[instructionNumber],
                     30,
-                    windowHeight / 2 - 180,
+                    windowHeight / 2 - 220,
                     windowWidth - 60,
                     windowHeight / 2 - 50
                 );
@@ -48,7 +48,7 @@ class QuestionDisplayer {
     }
 
     displayQuestion(questionNumber) {
-        console.log("display question number: " + questionNumber);
+        // console.log("display question number: " + questionNumber);
         if (questionNumber < this.questionList.length) {
             if (IS_DEBUG) {
                 // Add a HTML content rendering the string of the qudstionList[questionNumber].
@@ -65,7 +65,7 @@ class QuestionDisplayer {
                 text(
                     this.questionList[questionNumber],
                     30,
-                    windowHeight / 2 - 180,
+                    windowHeight / 2 - 220,
                     windowWidth - 60,
                     windowHeight / 2 - 100
                 );

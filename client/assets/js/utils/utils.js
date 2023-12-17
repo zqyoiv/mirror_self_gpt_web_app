@@ -309,6 +309,7 @@ function playSeasonMusicFromText(text) {
       break;
   }
   if (seasonAudio) {
+    seasonAudio.volume = 0.7;
     seasonAudio.loop = true;
     seasonAudio.play();
   }
@@ -326,10 +327,12 @@ function playDayNightMusicFromText(text) {
   switch (timeIndicator) {
     case 1:
       dayAudioFiles[0].loop = true;
+      dayAudioFiles[0].volume = 0.7;
       dayAudioFiles[0].play();
       break;
     case 2:
       dayAudioFiles[1].loop = true;
+      dayAudioFiles[1].volume = 0.7;
       dayAudioFiles[1].play();
       break;
   }
