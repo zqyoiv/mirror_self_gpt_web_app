@@ -74,7 +74,6 @@ function setup() {
   //输入框
   inputBox = createInput("");
   inputBox.id("answer-input");
-  inputBox.position(30, windowHeight / 2 + 100);
   inputBox.style("width", "600"); // 增加输入框的宽度
   inputBox.style("height", "100"); // 增加输入框的高度
   inputBox.style("font-size", "24px"); // 可选：增加字体大小以改善可读性

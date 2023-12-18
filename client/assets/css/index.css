@@ -162,6 +162,10 @@ input#answer-input {
     color:black;
     width: 600px;
     height: 100px;
+    top: 60%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #answer-input:focus,
