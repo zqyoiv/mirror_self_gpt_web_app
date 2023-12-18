@@ -5,4 +5,4 @@ const MIRROR_STATE = 2;
 const END_STATE = 3;
 
 let IS_DEBUG = false;
-let IS_AUDIO_MODE = true;
+let IS_AUDIO_MODE = false;

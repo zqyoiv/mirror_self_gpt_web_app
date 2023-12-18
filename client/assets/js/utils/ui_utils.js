@@ -20,14 +20,25 @@ const CHECK_MARK_TIMER = 1000;
 // ============= set up icons =====================
 
 function questionStateButtonSetup() {
-  $("img#next-button")[0].style.display = "none";
-  $("img#submit-button")[0].style.display = "none";
-  $("img#submit-button-black")[0].style.display = "none";
-  $("video#recording-label-black")[0].style.display = "none";
+  if (IS_AUDIO_MODE) {
+    // Audio mode
+    $("img#next-button")[0].style.display = "none";
+    $("img#submit-button")[0].style.display = "none";
+    $("img#submit-button-black")[0].style.display = "none";
+    $("video#recording-label-black")[0].style.display = "none";
 
-  $("video#recording-label")[0].style.display = "block";
+    $("video#recording-label")[0].style.display = "block";
+  } else {
+    // Type mode: hide all buttons.
+    $("img#next-button")[0].style.display = "none";
+    $("img#submit-button")[0].style.display = "none";
+    $("img#submit-button-black")[0].style.display = "none";
+    $("video#recording-label-black")[0].style.display = "none";
+    $("video#recording-label")[0].style.display = "none";
+  }
 }
 
+// Mirror state display audio button regardless of audio or non audio mode.
 function mirrorStateButtonSetup() {
   inputBox.hide();
   $("img#next-button")[0].style.display = "none";
@@ -128,7 +139,7 @@ function handleMirrorStateSubmit() {
             windowWidth - 40,
             windowHeight / 2 - 50);
         });
-        inputBox.value = "";
+        inputBox.elt.value = "";
     }
 }
 
@@ -136,7 +147,7 @@ function handleMirrorStateSubmit() {
 // 2. Display next question.
 function handleQuestionStateSubmit() {
   questionStateButtonSetup();
-  let answer = speechResult;
+  let answer = IS_AUDIO_MODE ? speechResult : inputBox.elt.value;
   let currentQuestionIndex = storyboardController.questionNumber;
   let lastQuestionIndex = currentQuestionIndex - 1;
   if (IS_AUDIO_MODE) {
@@ -149,7 +160,7 @@ function handleQuestionStateSubmit() {
       displayStartRecordingMessage();
       questionDisplayer.displayQuestion(storyboardController.questionNumber);
       storyboardController.nextQuestion();
-      inputBox.value = "";
+      inputBox.elt.value = "";
   } else if (currentQuestionIndex > 0) {
     clearInfoDisplay();
     if (answer == "") {
@@ -160,7 +171,7 @@ function handleQuestionStateSubmit() {
     }
     // For these questions, block user when they say less than 5 words.
     else if ([2, 3, 7, 8, 9].includes(lastQuestionIndex)) {
-      if (answer.split(" ").length < 5) {
+      if (answer.split(" ").length < 3) {
         // Block user from submitting empty answer.
         questionDisplayer.displayQuestion(lastQuestionIndex);
         displayShareMoreMessage();
@@ -170,7 +181,7 @@ function handleQuestionStateSubmit() {
 
     // Send last question's answer to GPT
     sendAnswerToServer(answer, lastQuestionIndex, storyboardController);
-    inputBox.value = "";
+    inputBox.elt.value = "";
 
     if (lastQuestionIndex == 6) {
       if (answer.indexOf("es") != -1) {
@@ -178,18 +189,18 @@ function handleQuestionStateSubmit() {
         storyboardController.questionNumber = 7;
         currentQuestionIndex = storyboardController.questionNumber;
         questionDisplayer.displayQuestion(currentQuestionIndex);
-        inputBox.value = "";
+        inputBox.elt.value = "";
       } else {
         storyboardController.isQuestion6Yes = false;
         storyboardController.questionNumber = 8;
         currentQuestionIndex = storyboardController.questionNumber;
         questionDisplayer.displayQuestion(currentQuestionIndex);
-        inputBox.value = "";
+        inputBox.elt.value = "";
         // console.log("---- updates isQuestion6Yes: false");
       }
     } else {
       questionDisplayer.displayQuestion(currentQuestionIndex);
-      inputBox.value = "";
+      inputBox.elt.value = "";
     }
 
     // Play audio.
@@ -225,7 +236,7 @@ function speechRecognitionSetup(inputBox) {
 
     speechRecognition.onstart = function() {
       speechResult = "";
-      inputBox.value = "";
+      inputBox.elt.value = "";
       if (storyboardController.questionNumber > 1) {
         clearInfoDisplay();
       }

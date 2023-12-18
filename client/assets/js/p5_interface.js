@@ -2,7 +2,6 @@
 //  Contents:
 //  1. p5 Canvas drawing functions.
 //  2. HTML event handlers
-//  3. Debug
 //
 // original version: https://editor.p5js.org/qh2207/sketches/5SfuOIngg
 // ========================================================
@@ -108,9 +107,6 @@ function draw() {
         updateLoadingText();
     } else if (storyboardController.state == MIRROR_STATE) {        
         wordCircle.draw();
-        if (!IS_AUDIO_MODE) {
-          inputBox.show();
-        }
     } else if (storyboardController.state == END_STATE) {
       removeAllSpeechFiles();
       location.reload();
@@ -182,12 +178,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 }, false);
 
-// ========================================================
-//     3. Debug
-// ========================================================
-
-// Debug workflow, simulate button tapping.
 function keyPressed() {
+
+  // Type mode: use enter to submit answer.
+  if (!IS_AUDIO_MODE && keyCode === ENTER) {
+    if (storyboardController.state == QUESTION_STATE) {
+      pushButtonNextStepHandler();
+    }
+  }
+
+// -------------- DEBUG MODE ------------------
+
+  // Debug workflow, simulate button tapping.
   if (key === '1') {
     inputBox.value = "yes";
     speechResult = "yes";
