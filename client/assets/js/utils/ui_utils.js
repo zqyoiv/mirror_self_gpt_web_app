@@ -47,6 +47,7 @@ function mirrorStateButtonSetup() {
   $("video#recording-label")[0].style.display = "none";
 
   $("video#recording-label-black")[0].style.display = "block";
+  if (!IS_AUDIO_MODE) displayStartRecordingMessage();
 }
 
 function loadingStateButtonSetup() {
@@ -157,7 +158,7 @@ function handleQuestionStateSubmit() {
   }
 
   if (currentQuestionIndex == 0) {
-      displayStartRecordingMessage();
+      if (IS_AUDIO_MODE) displayStartRecordingMessage();
       questionDisplayer.displayQuestion(storyboardController.questionNumber);
       storyboardController.nextQuestion();
       inputBox.elt.value = "";
